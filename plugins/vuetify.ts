@@ -2,22 +2,41 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
-const executiveTheme = {
+const executiveLightTheme = {
   dark: false,
   colors: {
-    primary: '#1A237E',
-    secondary: '#3F51B5',
-    accent: '#FF6B35',
-    success: '#4CAF50',
-    warning: '#FF9800',
-    error: '#F44336',
-    info: '#2196F3',
-    surface: '#FAFAFA',
-    background: '#F5F7FA',
-    'on-surface': '#1A1A1A',
-    'surface-variant': '#FFFFFF',
-    'primary-lighten-1': '#3949AB',
-    'primary-darken-1': '#1A237E'
+    primary: '#0A1628',
+    secondary: '#1E3A8A',
+    accent: '#D4AF37',
+    success: '#10B981',
+    warning: '#F59E0B',
+    error: '#EF4444',
+    info: '#3B82F6',
+    surface: '#FFFFFF',
+    background: '#F8FAFC',
+    'on-surface': '#0F172A',
+    'surface-variant': '#F1F5F9',
+    'primary-lighten-1': '#1E3A8A',
+    'primary-darken-1': '#020617'
+  }
+}
+
+const executiveDarkTheme = {
+  dark: true,
+  colors: {
+    primary: '#D4AF37',
+    secondary: '#3B82F6',
+    accent: '#F59E0B',
+    success: '#10B981',
+    warning: '#F59E0B',
+    error: '#EF4444',
+    info: '#3B82F6',
+    surface: '#0F172A',
+    background: '#020617',
+    'on-surface': '#F8FAFC',
+    'surface-variant': '#1E293B',
+    'primary-lighten-1': '#F59E0B',
+    'primary-darken-1': '#B45309'
   }
 }
 
@@ -26,9 +45,10 @@ export default defineNuxtPlugin((app) => {
     components,
     directives,
     theme: {
-      defaultTheme: 'executiveTheme',
+      defaultTheme: 'light',
       themes: {
-        executiveTheme
+        light: executiveLightTheme,
+        dark: executiveDarkTheme
       }
     },
     defaults: {

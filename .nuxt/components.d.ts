@@ -12,12 +12,17 @@ type HydrationStrategies = {
 }
 type LazyComponent<T> = (T & DefineComponent<HydrationStrategies, {}, {}, {}, {}, {}, {}, { hydrated: () => void }>)
 interface _GlobalComponents {
-      'AIInsightCard': typeof import("../components/AIInsightCard.vue")['default']
+      'AIExecutiveAssistant': typeof import("../components/AIExecutiveAssistant.vue")['default']
+    'AIInsightCard': typeof import("../components/AIInsightCard.vue")['default']
     'DrillDownModal': typeof import("../components/DrillDownModal.vue")['default']
+    'ExecutiveHeader': typeof import("../components/ExecutiveHeader.vue")['default']
     'ExecutiveKPI': typeof import("../components/ExecutiveKPI.vue")['default']
+    'ExecutiveKPICard': typeof import("../components/ExecutiveKPICard.vue")['default']
     'ExportPanel': typeof import("../components/ExportPanel.vue")['default']
     'GlobalOperationsGlobe': typeof import("../components/GlobalOperationsGlobe.vue")['default']
+    'HolographicDataViz': typeof import("../components/HolographicDataViz.vue")['default']
     'LiveStockTicker': typeof import("../components/LiveStockTicker.vue")['default']
+    'NetworkTopologyViz': typeof import("../components/NetworkTopologyViz.vue")['default']
     'RevenueChart': typeof import("../components/RevenueChart.vue")['default']
     'SentimentAnalysisDashboard': typeof import("../components/SentimentAnalysisDashboard.vue")['default']
     'TeamPerformanceRadar': typeof import("../components/TeamPerformanceRadar.vue")['default']
@@ -46,12 +51,17 @@ interface _GlobalComponents {
     'Body': typeof import("../node_modules/nuxt/dist/head/runtime/components")['Body']
     'NuxtIsland': typeof import("../node_modules/nuxt/dist/app/components/nuxt-island")['default']
     'NuxtRouteAnnouncer': typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']
-      'LazyAIInsightCard': LazyComponent<typeof import("../components/AIInsightCard.vue")['default']>
+      'LazyAIExecutiveAssistant': LazyComponent<typeof import("../components/AIExecutiveAssistant.vue")['default']>
+    'LazyAIInsightCard': LazyComponent<typeof import("../components/AIInsightCard.vue")['default']>
     'LazyDrillDownModal': LazyComponent<typeof import("../components/DrillDownModal.vue")['default']>
+    'LazyExecutiveHeader': LazyComponent<typeof import("../components/ExecutiveHeader.vue")['default']>
     'LazyExecutiveKPI': LazyComponent<typeof import("../components/ExecutiveKPI.vue")['default']>
+    'LazyExecutiveKPICard': LazyComponent<typeof import("../components/ExecutiveKPICard.vue")['default']>
     'LazyExportPanel': LazyComponent<typeof import("../components/ExportPanel.vue")['default']>
     'LazyGlobalOperationsGlobe': LazyComponent<typeof import("../components/GlobalOperationsGlobe.vue")['default']>
+    'LazyHolographicDataViz': LazyComponent<typeof import("../components/HolographicDataViz.vue")['default']>
     'LazyLiveStockTicker': LazyComponent<typeof import("../components/LiveStockTicker.vue")['default']>
+    'LazyNetworkTopologyViz': LazyComponent<typeof import("../components/NetworkTopologyViz.vue")['default']>
     'LazyRevenueChart': LazyComponent<typeof import("../components/RevenueChart.vue")['default']>
     'LazySentimentAnalysisDashboard': LazyComponent<typeof import("../components/SentimentAnalysisDashboard.vue")['default']>
     'LazyTeamPerformanceRadar': LazyComponent<typeof import("../components/TeamPerformanceRadar.vue")['default']>
@@ -86,12 +96,17 @@ declare module 'vue' {
   export interface GlobalComponents extends _GlobalComponents { }
 }
 
+export const AIExecutiveAssistant: typeof import("../components/AIExecutiveAssistant.vue")['default']
 export const AIInsightCard: typeof import("../components/AIInsightCard.vue")['default']
 export const DrillDownModal: typeof import("../components/DrillDownModal.vue")['default']
+export const ExecutiveHeader: typeof import("../components/ExecutiveHeader.vue")['default']
 export const ExecutiveKPI: typeof import("../components/ExecutiveKPI.vue")['default']
+export const ExecutiveKPICard: typeof import("../components/ExecutiveKPICard.vue")['default']
 export const ExportPanel: typeof import("../components/ExportPanel.vue")['default']
 export const GlobalOperationsGlobe: typeof import("../components/GlobalOperationsGlobe.vue")['default']
+export const HolographicDataViz: typeof import("../components/HolographicDataViz.vue")['default']
 export const LiveStockTicker: typeof import("../components/LiveStockTicker.vue")['default']
+export const NetworkTopologyViz: typeof import("../components/NetworkTopologyViz.vue")['default']
 export const RevenueChart: typeof import("../components/RevenueChart.vue")['default']
 export const SentimentAnalysisDashboard: typeof import("../components/SentimentAnalysisDashboard.vue")['default']
 export const TeamPerformanceRadar: typeof import("../components/TeamPerformanceRadar.vue")['default']
@@ -120,12 +135,17 @@ export const Html: typeof import("../node_modules/nuxt/dist/head/runtime/compone
 export const Body: typeof import("../node_modules/nuxt/dist/head/runtime/components")['Body']
 export const NuxtIsland: typeof import("../node_modules/nuxt/dist/app/components/nuxt-island")['default']
 export const NuxtRouteAnnouncer: typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']
+export const LazyAIExecutiveAssistant: LazyComponent<typeof import("../components/AIExecutiveAssistant.vue")['default']>
 export const LazyAIInsightCard: LazyComponent<typeof import("../components/AIInsightCard.vue")['default']>
 export const LazyDrillDownModal: LazyComponent<typeof import("../components/DrillDownModal.vue")['default']>
+export const LazyExecutiveHeader: LazyComponent<typeof import("../components/ExecutiveHeader.vue")['default']>
 export const LazyExecutiveKPI: LazyComponent<typeof import("../components/ExecutiveKPI.vue")['default']>
+export const LazyExecutiveKPICard: LazyComponent<typeof import("../components/ExecutiveKPICard.vue")['default']>
 export const LazyExportPanel: LazyComponent<typeof import("../components/ExportPanel.vue")['default']>
 export const LazyGlobalOperationsGlobe: LazyComponent<typeof import("../components/GlobalOperationsGlobe.vue")['default']>
+export const LazyHolographicDataViz: LazyComponent<typeof import("../components/HolographicDataViz.vue")['default']>
 export const LazyLiveStockTicker: LazyComponent<typeof import("../components/LiveStockTicker.vue")['default']>
+export const LazyNetworkTopologyViz: LazyComponent<typeof import("../components/NetworkTopologyViz.vue")['default']>
 export const LazyRevenueChart: LazyComponent<typeof import("../components/RevenueChart.vue")['default']>
 export const LazySentimentAnalysisDashboard: LazyComponent<typeof import("../components/SentimentAnalysisDashboard.vue")['default']>
 export const LazyTeamPerformanceRadar: LazyComponent<typeof import("../components/TeamPerformanceRadar.vue")['default']>

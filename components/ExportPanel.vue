@@ -34,36 +34,18 @@
 <script setup lang="ts">
 const dashboardStore = useDashboardStore()
 
+const { mockActions } = useMockActions()
+
 const exportPDF = () => {
-  const data = {
-    kpis: dashboardStore.kpis,
-    insights: dashboardStore.insights,
-    timestamp: new Date().toISOString()
-  }
-  
-  const blob = new Blob([`Executive Report - ${new Date().toLocaleDateString()}\n\n${JSON.stringify(data, null, 2)}`], 
-    { type: 'text/plain' })
-  downloadFile(blob, 'executive-report.txt')
+  mockActions.exportExecutiveReport()
 }
 
 const exportExcel = () => {
-  const csvData = dashboardStore.kpis.map(kpi => 
-    `${kpi.title},${kpi.value},${kpi.change}%,${kpi.trend}`
-  ).join('\n')
-  
-  const blob = new Blob([`Title,Value,Change,Trend\n${csvData}`], { type: 'text/csv' })
-  downloadFile(blob, 'kpi-data.csv')
+  mockActions.exportExecutiveReport()
 }
 
 const exportJSON = () => {
-  const data = {
-    kpis: dashboardStore.kpis,
-    insights: dashboardStore.insights,
-    exportedAt: new Date().toISOString()
-  }
-  
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
-  downloadFile(blob, 'dashboard-data.json')
+  mockActions.exportExecutiveReport()
 }
 
 const downloadFile = (blob: Blob, filename: string) => {

@@ -247,6 +247,7 @@ declare global {
   const useMediaQuery: typeof import('../../node_modules/@vueuse/core')['useMediaQuery']
   const useMemoize: typeof import('../../node_modules/@vueuse/core')['useMemoize']
   const useMemory: typeof import('../../node_modules/@vueuse/core')['useMemory']
+  const useMockActions: typeof import('../../composables/useMockActions')['useMockActions']
   const useModel: typeof import('../../node_modules/vue')['useModel']
   const useMounted: typeof import('../../node_modules/@vueuse/core')['useMounted']
   const useMouse: typeof import('../../node_modules/@vueuse/core')['useMouse']
@@ -346,6 +347,7 @@ declare global {
   const useTextDirection: typeof import('../../node_modules/@vueuse/core')['useTextDirection']
   const useTextSelection: typeof import('../../node_modules/@vueuse/core')['useTextSelection']
   const useTextareaAutosize: typeof import('../../node_modules/@vueuse/core')['useTextareaAutosize']
+  const useTheme: typeof import('../../composables/useTheme')['useTheme']
   const useThrottle: typeof import('../../node_modules/@vueuse/core')['useThrottle']
   const useThrottleFn: typeof import('../../node_modules/@vueuse/core')['useThrottleFn']
   const useThrottledRefHistory: typeof import('../../node_modules/@vueuse/core')['useThrottledRefHistory']
@@ -652,6 +654,7 @@ declare module 'vue' {
     readonly useMediaQuery: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useMediaQuery']>
     readonly useMemoize: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useMemoize']>
     readonly useMemory: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useMemory']>
+    readonly useMockActions: UnwrapRef<typeof import('../../composables/useMockActions')['useMockActions']>
     readonly useModel: UnwrapRef<typeof import('../../node_modules/vue')['useModel']>
     readonly useMounted: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useMounted']>
     readonly useMouse: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useMouse']>
@@ -751,6 +754,7 @@ declare module 'vue' {
     readonly useTextDirection: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useTextDirection']>
     readonly useTextSelection: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useTextSelection']>
     readonly useTextareaAutosize: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useTextareaAutosize']>
+    readonly useTheme: UnwrapRef<typeof import('../../composables/useTheme')['useTheme']>
     readonly useThrottle: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useThrottle']>
     readonly useThrottleFn: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useThrottleFn']>
     readonly useThrottledRefHistory: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useThrottledRefHistory']>

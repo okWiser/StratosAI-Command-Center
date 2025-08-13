@@ -46,8 +46,15 @@
           </v-col>
         </v-row>
 
+        <!-- Live Stock Ticker -->
+        <v-row class="mb-6">
+          <v-col cols="12">
+            <LiveStockTicker />
+          </v-col>
+        </v-row>
+
         <!-- Main Content Grid -->
-        <v-row>
+        <v-row class="mb-6">
           <!-- Revenue Chart -->
           <v-col cols="12" lg="8">
             <RevenueChart />
@@ -83,58 +90,84 @@
           </v-col>
         </v-row>
 
-        <!-- Performance Metrics -->
-        <v-row class="mt-8">
+        <!-- Interactive Features Row -->
+        <v-row class="mb-6">
+          <!-- Global Operations Globe -->
+          <v-col cols="12" lg="6">
+            <GlobalOperationsGlobe />
+          </v-col>
+          
+          <!-- Team Performance Radar -->
+          <v-col cols="12" lg="6">
+            <TeamPerformanceRadar />
+          </v-col>
+        </v-row>
+
+        <!-- AI Analysis Row -->
+        <v-row class="mb-6">
+          <!-- Sentiment Analysis -->
+          <v-col cols="12" lg="8">
+            <SentimentAnalysisDashboard />
+          </v-col>
+          
+          <!-- Voice Command Center -->
+          <v-col cols="12" lg="4">
+            <VoiceCommandCenter />
+          </v-col>
+        </v-row>
+
+        <!-- Enhanced Performance Metrics -->
+        <v-row>
           <v-col cols="12">
-            <v-card class="executive-card" elevation="0">
+            <v-card class="executive-card performance-overview" elevation="0">
               <v-card-title class="text-h6 font-weight-bold">
-                Performance Overview
+                <v-icon class="mr-2" color="primary">mdi-chart-donut</v-icon>
+                Executive Performance Overview
+                <v-spacer />
+                <v-btn variant="outlined" size="small" prepend-icon="mdi-refresh">
+                  Real-time Update
+                </v-btn>
               </v-card-title>
               
               <v-card-text>
                 <v-row>
-                  <v-col cols="12" md="4">
-                    <div class="text-center pa-4">
-                      <v-progress-circular
-                        :model-value="94.2"
-                        size="120"
-                        width="8"
-                        color="success"
-                        class="mb-4"
-                      >
-                        <span class="text-h5 font-weight-bold">94.2%</span>
-                      </v-progress-circular>
-                      <h4 class="text-h6 font-weight-medium">Customer Satisfaction</h4>
+                  <v-col cols="12" md="3">
+                    <div class="metric-circle-container">
+                      <div class="metric-circle success-metric">
+                        <div class="metric-value">94.2%</div>
+                        <div class="metric-label">Customer Satisfaction</div>
+                        <div class="metric-trend">+2.3% ↗</div>
+                      </div>
                     </div>
                   </v-col>
                   
-                  <v-col cols="12" md="4">
-                    <div class="text-center pa-4">
-                      <v-progress-circular
-                        :model-value="87.5"
-                        size="120"
-                        width="8"
-                        color="primary"
-                        class="mb-4"
-                      >
-                        <span class="text-h5 font-weight-bold">87.5%</span>
-                      </v-progress-circular>
-                      <h4 class="text-h6 font-weight-medium">Operational Efficiency</h4>
+                  <v-col cols="12" md="3">
+                    <div class="metric-circle-container">
+                      <div class="metric-circle primary-metric">
+                        <div class="metric-value">87.5%</div>
+                        <div class="metric-label">Operational Efficiency</div>
+                        <div class="metric-trend">+1.8% ↗</div>
+                      </div>
                     </div>
                   </v-col>
                   
-                  <v-col cols="12" md="4">
-                    <div class="text-center pa-4">
-                      <v-progress-circular
-                        :model-value="76.8"
-                        size="120"
-                        width="8"
-                        color="warning"
-                        class="mb-4"
-                      >
-                        <span class="text-h5 font-weight-bold">76.8%</span>
-                      </v-progress-circular>
-                      <h4 class="text-h6 font-weight-medium">Market Share</h4>
+                  <v-col cols="12" md="3">
+                    <div class="metric-circle-container">
+                      <div class="metric-circle warning-metric">
+                        <div class="metric-value">76.8%</div>
+                        <div class="metric-label">Market Share</div>
+                        <div class="metric-trend">-0.5% ↘</div>
+                      </div>
+                    </div>
+                  </v-col>
+                  
+                  <v-col cols="12" md="3">
+                    <div class="metric-circle-container">
+                      <div class="metric-circle info-metric">
+                        <div class="metric-value">92.1%</div>
+                        <div class="metric-label">AI Accuracy</div>
+                        <div class="metric-trend">+4.2% ↗</div>
+                      </div>
                     </div>
                   </v-col>
                 </v-row>

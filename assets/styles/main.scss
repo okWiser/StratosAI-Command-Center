@@ -60,3 +60,142 @@ body {
     backdrop-filter: blur(20px);
   }
 }
+
+// Enhanced Performance Metrics
+.performance-overview {
+  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(245,247,250,0.95));
+  border: 1px solid rgba(26,35,126,0.1);
+}
+
+.metric-circle-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.metric-circle {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    transform: scale(1.05) translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  }
+  
+  &.success-metric {
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    box-shadow: 0 8px 32px rgba(76,175,80,0.3);
+  }
+  
+  &.primary-metric {
+    background: linear-gradient(135deg, #1A237E, #3F51B5);
+    box-shadow: 0 8px 32px rgba(26,35,126,0.3);
+  }
+  
+  &.warning-metric {
+    background: linear-gradient(135deg, #FF9800, #FFB74D);
+    box-shadow: 0 8px 32px rgba(255,152,0,0.3);
+  }
+  
+  &.info-metric {
+    background: linear-gradient(135deg, #2196F3, #64B5F6);
+    box-shadow: 0 8px 32px rgba(33,150,243,0.3);
+  }
+}
+
+.metric-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  font-family: 'Playfair Display';
+}
+
+.metric-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.9);
+  text-align: center;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.metric-trend {
+  font-size: 10px;
+  color: rgba(255,255,255,0.8);
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+// Globe animations
+.globe-container {
+  .location-pin:hover {
+    .location-dot {
+      transform: scale(1.5);
+      box-shadow: 0 0 20px currentColor;
+    }
+  }
+}
+
+// Stock ticker enhancements
+.ticker-container {
+  border: 1px solid rgba(26,35,126,0.1);
+  background: linear-gradient(90deg, 
+    rgba(26,35,126,0.02), 
+    rgba(26,35,126,0.05), 
+    rgba(26,35,126,0.02)
+  );
+}
+
+// Voice command center effects
+.voice-container {
+  border: 2px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(135deg, #1A237E, #FF6B35) border-box;
+}
+
+// Sentiment analysis gauge glow
+.sentiment-container {
+  .gauge-svg {
+    filter: drop-shadow(0 0 10px rgba(26,35,126,0.2));
+  }
+}
+
+// Team radar chart hover effects
+.radar-container {
+  .data-point:hover {
+    filter: drop-shadow(0 0 8px currentColor);
+  }
+}
+
+// Global floating animation
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.executive-card:nth-child(odd) {
+  animation: float 6s ease-in-out infinite;
+}
+
+.executive-card:nth-child(even) {
+  animation: float 6s ease-in-out infinite reverse;
+}
+
+// Shimmer effect for loading states
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+}

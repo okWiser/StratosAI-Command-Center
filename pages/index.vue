@@ -721,6 +721,73 @@
             </div>
           </div>
         </div>
+        
+        <!-- Voice Result Modal -->
+        <div v-if="modalType === 'voiceResult'" class="voice-result-modal">
+          <div class="modal-header">
+            <h2>🎤 Voice Command Executed</h2>
+            <div class="confidence-badge">{{ modalData.confidence }} Confidence</div>
+          </div>
+          <div class="modal-body">
+            <div class="command-result">
+              <div class="result-text">{{ modalData.result }}</div>
+            </div>
+            <div class="actions-taken">
+              <h3>Actions Completed</h3>
+              <div v-for="action in modalData.actions" :key="action" class="action-item">✓ {{ action }}</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Dataset Detail Modal -->
+        <div v-if="modalType === 'datasetDetail'" class="dataset-detail-modal">
+          <div class="modal-header">
+            <h2>📊 {{ modalData.title }}</h2>
+            <div class="accuracy-badge">{{ modalData.accuracy }} Accuracy</div>
+          </div>
+          <div class="modal-body">
+            <div class="insights-section">
+              <h3>Key Insights</h3>
+              <ul>
+                <li v-for="insight in modalData.insights" :key="insight">💡 {{ insight }}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Network Detail Modal -->
+        <div v-if="modalType === 'networkDetail'" class="network-detail-modal">
+          <div class="modal-header">
+            <h2>🌐 {{ modalData.title }}</h2>
+            <div class="status-badge">{{ modalData.status }}</div>
+          </div>
+          <div class="modal-body">
+            <div class="alerts-section">
+              <h3>Recent Alerts</h3>
+              <div v-for="alert in modalData.alerts" :key="alert" class="alert-item">⚠️ {{ alert }}</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Office Detail Modal -->
+        <div v-if="modalType === 'officeDetail'" class="office-detail-modal">
+          <div class="modal-header">
+            <h2>🏢 {{ modalData.title }}</h2>
+            <div class="office-type">{{ modalData.type }}</div>
+          </div>
+          <div class="modal-body">
+            <div class="office-overview">
+              <div class="overview-stat">
+                <span class="stat-number">{{ modalData.employees }}</span>
+                <span class="stat-text">Employees</span>
+              </div>
+              <div class="overview-stat">
+                <span class="stat-number">{{ modalData.revenue }}</span>
+                <span class="stat-text">Revenue</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1211,14 +1278,47 @@ const selectNetworkNode = (node) => {
 }
 
 const executeVoiceCommand = (command) => {
-  const responses = {
-    'Show revenue report': '📊 Revenue dashboard activated - $28.5M quarterly performance',
-    'Update dashboard': '🔄 Dashboard synchronized with quantum data streams',
-    'Generate forecast': '🔮 AI forecast generated - 31% growth predicted next quarter',
-    'Export data': '📤 Data export initiated - Quantum encrypted file ready',
-    'Security status': '🛡️ All systems secure - Biometric authentication active'
-  }
-  showNotification(`🎤 Voice: "${command}" - ${responses[command] || 'Command processed'}`, 'info')
+  openModal('voiceResult', {
+    command: command,
+    confidence: '97.3%',
+    result: `Voice command "${command}" executed successfully`,
+    actions: ['Dashboard Updated', 'Data Refreshed', 'Notifications Sent']
+  })
+}
+
+const switchDataset = (dataset) => {
+  currentDataset.value = dataset
+  openModal('datasetDetail', {
+    title: `${dataset} Analytics Deep Dive`,
+    accuracy: '96.8%',
+    insights: [`${dataset} trending upward`, 'AI optimization active', 'Performance excellent']
+  })
+}
+
+const selectNetworkNode = (node) => {
+  openModal('networkDetail', {
+    title: node.name,
+    status: 'Optimal Performance',
+    alerts: ['System optimized', 'Performance enhanced', 'Security verified']
+  })
+}
+
+const showOfficeDetails = (office) => {
+  openModal('officeDetail', {
+    title: `${office.city} Office`,
+    type: office.tier.charAt(0).toUpperCase() + office.tier.slice(1),
+    employees: Math.floor(Math.random() * 500) + 50,
+    revenue: `$${(Math.random() * 10 + 1).toFixed(1)}M`
+  })
+}
+
+const sendQuickMessage = (action) => {
+  openModal('voiceResult', {
+    command: action,
+    confidence: '98.1%',
+    result: `Quick action "${action}" completed successfully`,
+    actions: ['Analysis Generated', 'Data Updated', 'Report Ready']
+  })
 }
 
 
@@ -4116,4 +4216,310 @@ onUnmounted(() => {
   .exec-role {
     font-size: 10px;
   }
+}
+// Impressive Executive Profile Styling
+.profile-main-impressive {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, 
+    rgba(212, 175, 55, 0.1) 0%, 
+    rgba(15, 76, 58, 0.1) 35%, 
+    rgba(30, 58, 138, 0.1) 70%, 
+    rgba(10, 10, 11, 0.1) 100%);
+  backdrop-filter: blur(32px);
+  border: 2px solid transparent;
+  border-radius: 28px;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 280px;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 2px;
+    background: var(--royal-gradient);
+    border-radius: 28px;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: xor;
+    z-index: -1;
+  }
+  
+  &:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 
+      0 20px 40px rgba(212, 175, 55, 0.2),
+      0 0 60px rgba(212, 175, 55, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+}
+
+.avatar-complex {
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+
+.avatar-outer-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    var(--luxe-gold) 0deg,
+    var(--luxe-emerald) 90deg,
+    var(--luxe-sapphire) 180deg,
+    var(--luxe-obsidian) 270deg,
+    var(--luxe-gold) 360deg
+  );
+  animation: avatarRotate 8s linear infinite;
+}
+
+.avatar-middle-ring {
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: var(--theme-surface);
+  animation: avatarPulse 3s ease-in-out infinite;
+}
+
+.avatar-core {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--royal-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.avatar-gradient {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-portrait {
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(247, 231, 206, 0.9) 0%,
+    rgba(212, 175, 55, 0.7) 50%,
+    rgba(10, 10, 11, 0.8) 100%
+  );
+  overflow: hidden;
+}
+
+.portrait-silhouette {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 24px;
+  background: var(--luxe-obsidian);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    height: 20px;
+    background: var(--luxe-obsidian);
+    border-radius: 0 0 16px 16px;
+  }
+}
+
+.portrait-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(212, 175, 55, 0.3) 0%,
+    transparent 70%
+  );
+  animation: portraitGlow 4s ease-in-out infinite;
+}
+
+.avatar-initials-premium {
+  position: absolute;
+  font-size: 20px;
+  font-weight: 900;
+  color: white;
+  font-family: 'Playfair Display', serif;
+  text-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    0 0 10px rgba(212, 175, 55, 0.5);
+  z-index: 2;
+}
+
+.executive-insignia {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 3;
+}
+
+.insignia-star {
+  font-size: 12px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  animation: insigniaTwinkle 2s ease-in-out infinite;
+}
+
+.insignia-crown {
+  font-size: 16px;
+  margin-top: -4px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.status-constellation {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 20px;
+  height: 20px;
+}
+
+.status-star {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--luxe-emerald);
+  border-radius: 50%;
+  
+  &.main {
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--theme-surface);
+    animation: statusPulse 2s ease-in-out infinite;
+  }
+  
+  &.orbit {
+    width: 4px;
+    height: 4px;
+    top: 2px;
+    right: 2px;
+    background: var(--luxe-gold);
+    animation: orbitStar 3s linear infinite;
+  }
+}
+
+.profile-info-premium {
+  flex: 1;
+  padding: 0 8px;
+}
+
+.exec-name-impressive {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--theme-text);
+  margin-bottom: 2px;
+  font-family: 'Playfair Display', serif;
+  background: var(--royal-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.exec-title-impressive {
+  font-size: 11px;
+  color: var(--luxe-gold);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.exec-status-premium {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  color: var(--theme-textSecondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-indicator-premium {
+  width: 6px;
+  height: 6px;
+  background: var(--luxe-emerald);
+  border-radius: 50%;
+  animation: statusBlink 2s ease-in-out infinite;
+}
+
+.dropdown-chevron-premium {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &.active {
+    transform: rotate(180deg);
+  }
+}
+
+.chevron-premium {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--luxe-gold);
+  border-bottom: 2px solid var(--luxe-gold);
+  transform: translate(-50%, -50%) rotate(45deg);
+  transition: all 0.3s ease;
+}
+
+// Animations
+@keyframes avatarRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes portraitGlow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes insigniaTwinkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.2); }
+}
+
+@keyframes orbitStar {
+  from { transform: rotate(0deg) translateX(8px) rotate(0deg); }
+  to { transform: rotate(360deg) translateX(8px) rotate(-360deg); }
+}
+
+@keyframes statusPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+@keyframes statusBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }

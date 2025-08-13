@@ -19,26 +19,21 @@
           <button @click="sendToEmail" class="email-btn">
             📧 Email Report
           </button>
-          <div class="profile-mini" @click="toggleProfileMenu">
-            <img :src="currentExecutive.avatar" :alt="currentExecutive.name" class="mini-avatar" />
-            <span class="mini-name">{{ currentExecutive.name }}</span>
-            <span class="profile-arrow">{{ showProfileMenu ? '▲' : '▼' }}</span>
-            <div v-if="showProfileMenu" class="profile-dropdown">
-              <div class="current-user">
-                <div class="user-info">
-                  <img :src="currentExecutive.avatar" :alt="currentExecutive.name" class="dropdown-avatar" />
-                  <div>
-                    <div class="dropdown-name">{{ currentExecutive.name }}</div>
-                    <div class="dropdown-title">{{ currentExecutive.title }}</div>
-                    <div class="dropdown-status">🟢 Online - {{ currentExecutive.clearanceLevel }}</div>
-                  </div>
-                </div>
+          <div class="executive-profile-card" @click="openProfileModal">
+            <div class="profile-glow"></div>
+            <div class="profile-content">
+              <div class="profile-avatar-container">
+                <img :src="currentExecutive.avatar" :alt="currentExecutive.name" class="elite-avatar" />
+                <div class="status-pulse"></div>
+                <div class="clearance-badge">{{ currentExecutive.clearanceLevel }}</div>
               </div>
-              <div class="profile-actions">
-                <button @click="viewProfile" class="profile-action-btn">👤 View Profile</button>
-                <button @click="securitySettings" class="profile-action-btn">🔒 Security Settings</button>
-                <button @click="switchUser" class="profile-action-btn">🔄 Switch User</button>
-                <button @click="logout" class="profile-action-btn logout">🚪 Logout</button>
+              <div class="profile-details">
+                <div class="exec-name-elite">{{ currentExecutive.name }}</div>
+                <div class="exec-title-elite">{{ currentExecutive.title }}</div>
+                <div class="session-info">
+                  <span class="session-dot"></span>
+                  <span>Session: {{ sessionTime }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -585,6 +580,150 @@
       </div>
     </div>
 
+    <!-- Elite Modal System -->
+    <div v-if="showModal" class="modal-overlay" @click="closeModal">
+      <div class="modal-container" @click.stop>
+        <button @click="closeModal" class="modal-close">✕</button>
+        
+        <!-- Profile Modal -->
+        <div v-if="modalType === 'profile'" class="profile-modal">
+          <div class="modal-header">
+            <div class="profile-hero">
+              <img :src="currentExecutive.avatar" :alt="modalData.name" class="hero-avatar" />
+              <div class="hero-info">
+                <h2>{{ modalData.name }}</h2>
+                <p>{{ modalData.title }}</p>
+                <div class="clearance-display">{{ modalData.clearance }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-body">
+            <div class="profile-stats">
+              <div class="stat-card">
+                <div class="stat-value">{{ modalData.metrics.decisionsToday }}</div>
+                <div class="stat-label">Decisions Today</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">{{ modalData.metrics.reportsGenerated }}</div>
+                <div class="stat-label">Reports Generated</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">{{ modalData.securityScore }}%</div>
+                <div class="stat-label">Security Score</div>
+              </div>
+            </div>
+            <div class="achievements">
+              <h3>Achievements</h3>
+              <div class="achievement-list">
+                <span v-for="achievement in modalData.achievements" :key="achievement" class="achievement-badge">
+                  🏆 {{ achievement }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Report Modal -->
+        <div v-if="modalType === 'report'" class="report-modal">
+          <div class="modal-header">
+            <h2>📊 {{ modalData.title }}</h2>
+            <div class="report-meta">{{ modalData.type }} • {{ modalData.pages }} pages</div>
+          </div>
+          <div class="modal-body">
+            <div class="report-preview">
+              <div class="preview-stats">
+                <div class="preview-stat">
+                  <span class="stat-number">{{ modalData.insights }}</span>
+                  <span class="stat-text">AI Insights</span>
+                </div>
+                <div class="preview-stat">
+                  <span class="stat-number">{{ modalData.charts }}</span>
+                  <span class="stat-text">Interactive Charts</span>
+                </div>
+                <div class="preview-stat">
+                  <span class="stat-number">{{ modalData.recommendations }}</span>
+                  <span class="stat-text">Strategic Recommendations</span>
+                </div>
+              </div>
+              <div class="report-actions">
+                <button class="action-btn primary">📧 Email Report</button>
+                <button class="action-btn secondary">📎 Download PDF</button>
+                <button class="action-btn tertiary">🔗 Share Link</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- KPI Modal -->
+        <div v-if="modalType === 'kpi'" class="kpi-modal">
+          <div class="modal-header">
+            <h2>{{ modalData.title }}</h2>
+            <div class="kpi-trend">{{ modalData.trend }}</div>
+          </div>
+          <div class="modal-body">
+            <div class="kpi-overview">
+              <div class="kpi-main-value">{{ modalData.value }}</div>
+              <div class="kpi-change">{{ modalData.change }}</div>
+            </div>
+            <div class="kpi-breakdown">
+              <h3>Breakdown Analysis</h3>
+              <div v-for="(item, key) in modalData.breakdown" :key="key" class="breakdown-item">
+                <span class="breakdown-label">{{ key }}</span>
+                <span class="breakdown-value">{{ item.value }}</span>
+                <span class="breakdown-change">{{ item.change }}</span>
+              </div>
+            </div>
+            <div class="kpi-insights">
+              <h3>Key Insights</h3>
+              <ul>
+                <li v-for="insight in modalData.insights" :key="insight">{{ insight }}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Security Modal -->
+        <div v-if="modalType === 'security'" class="security-modal">
+          <div class="modal-header">
+            <h2>🔒 {{ modalData.title }}</h2>
+            <div class="threat-level" :class="modalData.threatLevel.toLowerCase()">{{ modalData.threatLevel }}</div>
+          </div>
+          <div class="modal-body">
+            <div class="security-overview">
+              <div class="security-stat">
+                <div class="stat-value">{{ modalData.securityScore }}%</div>
+                <div class="stat-label">Security Score</div>
+              </div>
+              <div class="security-stat">
+                <div class="stat-value">{{ modalData.blockedAttempts.toLocaleString() }}</div>
+                <div class="stat-label">Threats Blocked</div>
+              </div>
+              <div class="security-stat">
+                <div class="stat-value">{{ modalData.activeThreats }}</div>
+                <div class="stat-label">Active Threats</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Analytics Modal -->
+        <div v-if="modalType === 'analytics'" class="analytics-modal">
+          <div class="modal-header">
+            <h2>📈 {{ modalData.title }}</h2>
+            <div class="analytics-status">🟢 {{ modalData.insights }} Active Insights</div>
+          </div>
+          <div class="modal-body">
+            <div class="analytics-overview">
+              <div class="analytics-stat">
+                <div class="stat-value">{{ modalData.insights }}</div>
+                <div class="stat-label">AI Insights</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Notification -->
     <div v-if="notification" class="notification" :class="notification.type">
       {{ notification.message }}
@@ -906,9 +1045,26 @@ const showNotification = (message, type = 'info') => {
 
 const generateReport = (report = null) => {
   if (report) {
-    showNotification(`${report.title} generated successfully! 📊`, 'success')
+    openModal('report', {
+      title: report.title,
+      type: report.type,
+      pages: Math.floor(Math.random() * 50) + 20,
+      insights: Math.floor(Math.random() * 100) + 50,
+      charts: Math.floor(Math.random() * 15) + 8,
+      recommendations: Math.floor(Math.random() * 10) + 5,
+      preview: `Executive Summary: ${report.description}`,
+      downloadUrl: '#',
+      shareUrl: '#'
+    })
   } else {
-    showNotification('Executive board presentation generated successfully!', 'success')
+    openModal('presentation', {
+      title: 'Executive Board Presentation',
+      slides: 47,
+      duration: '45 minutes',
+      sections: ['Market Overview', 'Financial Performance', 'Strategic Initiatives', 'Risk Assessment', 'Future Outlook'],
+      keyMetrics: ['Revenue: $28.5M (+23.8%)', 'Market Share: 34.2%', 'Customer Growth: +18%', 'Efficiency: 94.2%'],
+      downloadUrl: '#'
+    })
   }
 }
 
@@ -952,10 +1108,39 @@ const switchProfile = () => {
   showNotification('👤 Biometric scanner activated - Place finger on scanner', 'info')
 }
 
-const showProfileMenu = ref(false)
+const showModal = ref(false)
+const modalType = ref('')
+const modalData = ref(null)
 
-const toggleProfileMenu = () => {
-  showProfileMenu.value = !showProfileMenu.value
+const openModal = (type, data = null) => {
+  modalType.value = type
+  modalData.value = data
+  showModal.value = true
+}
+
+const closeModal = () => {
+  showModal.value = false
+  modalType.value = ''
+  modalData.value = null
+}
+
+const openProfileModal = () => {
+  openModal('profile', {
+    name: currentExecutive.value.name,
+    title: currentExecutive.value.title,
+    clearance: currentExecutive.value.clearanceLevel,
+    lastLogin: '2024-01-15 09:23:45 UTC',
+    totalSessions: 1247,
+    securityScore: 98.7,
+    achievements: ['Quantum Pioneer', 'AI Visionary', 'Global Leader'],
+    departments: ['Executive', 'Strategy', 'Innovation'],
+    metrics: {
+      decisionsToday: 23,
+      reportsGenerated: 8,
+      meetingsScheduled: 5,
+      alertsResolved: 12
+    }
+  })
 }
 
 const viewProfile = () => {
@@ -1088,13 +1273,35 @@ onUnmounted(() => {
 })
 
 const showKPIDetails = (kpi) => {
-  const kpiDetails = {
-    1: '💰 Revenue Analytics: Q4 performance +23.8% | Key drivers: Enterprise sales (+31%), Subscription growth (+18%)',
-    2: '📈 Market Growth Dashboard: Sector analysis shows 23.8% expansion | Competitive advantage: AI integration',
-    3: '⚡ Operations Excellence: 94.2% efficiency rating | Automation savings: $2.3M annually',
-    4: '🛡️ Risk Management: Current risk score 12.3 (Low) | Main concerns: Market volatility, supply chain'
+  const kpiData = {
+    1: {
+      title: 'Quarterly Revenue Analysis',
+      value: '$28.5M',
+      change: '+23.8%',
+      trend: 'Exponential Growth',
+      breakdown: {
+        'Enterprise Sales': { value: '$18.2M', change: '+31%' },
+        'Subscription Revenue': { value: '$7.8M', change: '+18%' },
+        'Professional Services': { value: '$2.5M', change: '+12%' }
+      },
+      forecast: '$35.2M next quarter',
+      insights: ['Strong enterprise adoption', 'Subscription model scaling', 'International expansion driving growth']
+    },
+    2: {
+      title: 'Market Growth Analytics',
+      value: '23.8%',
+      change: '+8.3%',
+      trend: 'Market Leadership',
+      breakdown: {
+        'Market Share': { value: '34.2%', change: '+5.1%' },
+        'Customer Acquisition': { value: '847', change: '+28%' },
+        'Brand Recognition': { value: '89%', change: '+12%' }
+      },
+      forecast: '28.5% projected growth',
+      insights: ['AI integration advantage', 'Competitive moat strengthening', 'Premium positioning success']
+    }
   }
-  showNotification(kpiDetails[kpi.id] || `Opening detailed analytics for ${kpi.title}`, 'info')
+  openModal('kpi', kpiData[kpi.id] || { title: kpi.title, value: kpi.value })
 }
 
 const showOfficeDetails = (office) => {
@@ -3049,5 +3256,486 @@ onUnmounted(() => {
   
   .quantum-particles .particle {
     animation: none;
+  }
+}
+// Elite Profile Card Styling
+.executive-profile-card {
+  position: relative;
+  background: var(--theme-glass);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--theme-border);
+  border-radius: 20px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  min-width: 280px;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+    transition: left 0.6s ease;
+  }
+  
+  &:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: var(--luxe-shadow), var(--gold-glow);
+    border-color: var(--luxe-gold);
+    
+    &::before {
+      left: 100%;
+    }
+    
+    .profile-glow {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+  }
+}
+
+.profile-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, var(--luxe-gold) 0%, transparent 70%);
+  opacity: 0;
+  transition: all 0.6s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.profile-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.profile-avatar-container {
+  position: relative;
+}
+
+.elite-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 3px solid var(--luxe-gold);
+  box-shadow: var(--gold-glow);
+  transition: all 0.4s ease;
+}
+
+.status-pulse {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 16px;
+  height: 16px;
+  background: var(--luxe-emerald);
+  border-radius: 50%;
+  border: 2px solid var(--theme-surface);
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
+}
+
+.clearance-badge {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--royal-gradient);
+  color: white;
+  font-size: 8px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 8px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.profile-details {
+  flex: 1;
+}
+
+.exec-name-elite {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--theme-text);
+  margin-bottom: 2px;
+  font-family: 'Playfair Display', serif;
+}
+
+.exec-title-elite {
+  font-size: 12px;
+  color: var(--luxe-gold);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.session-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--theme-textSecondary);
+}
+
+.session-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--luxe-emerald);
+  border-radius: 50%;
+  animation: sessionBlink 3s ease-in-out infinite;
+}
+
+@keyframes sessionBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+// Elite Modal System
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-container {
+  background: var(--theme-glass);
+  backdrop-filter: blur(32px);
+  border: 1px solid var(--theme-border);
+  border-radius: 24px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--luxe-shadow), var(--gold-glow);
+}
+
+@keyframes modalSlideIn {
+  from { transform: translateY(50px) scale(0.9); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--theme-border);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--theme-text);
+  font-size: 14px;
+  transition: all 0.3s ease;
+  z-index: 1;
+  
+  &:hover {
+    background: var(--luxe-crimson);
+    color: white;
+    transform: rotate(90deg);
+  }
+}
+
+// Profile Modal
+.profile-modal {
+  width: 600px;
+  padding: 32px;
+}
+
+.profile-hero {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.hero-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 4px solid var(--luxe-gold);
+  box-shadow: var(--gold-glow);
+}
+
+.hero-info h2 {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--theme-text);
+  margin: 0 0 8px 0;
+  font-family: 'Playfair Display', serif;
+}
+
+.hero-info p {
+  font-size: 16px;
+  color: var(--luxe-gold);
+  font-weight: 600;
+  margin: 0 0 12px 0;
+}
+
+.clearance-display {
+  background: var(--royal-gradient);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: var(--theme-glass);
+  border: 1px solid var(--theme-border);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--gold-glow);
+  }
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--luxe-gold);
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--theme-textSecondary);
+  font-weight: 600;
+}
+
+.achievements h3 {
+  color: var(--theme-text);
+  margin-bottom: 16px;
+}
+
+.achievement-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.achievement-badge {
+  background: var(--royal-gradient);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+// Report Modal
+.report-modal {
+  width: 700px;
+  padding: 32px;
+}
+
+.modal-header h2 {
+  color: var(--theme-text);
+  margin: 0 0 8px 0;
+  font-size: 24px;
+}
+
+.report-meta {
+  color: var(--theme-textSecondary);
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.preview-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.preview-stat {
+  text-align: center;
+  padding: 16px;
+  background: var(--theme-glass);
+  border-radius: 12px;
+  border: 1px solid var(--theme-border);
+}
+
+.stat-number {
+  display: block;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--luxe-gold);
+  margin-bottom: 4px;
+}
+
+.stat-text {
+  font-size: 12px;
+  color: var(--theme-textSecondary);
+}
+
+.report-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.action-btn {
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  
+  &.primary {
+    background: var(--royal-gradient);
+    color: white;
+  }
+  
+  &.secondary {
+    background: var(--emerald-gradient);
+    color: white;
+  }
+  
+  &.tertiary {
+    background: var(--sapphire-gradient);
+    color: white;
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--gold-glow);
+  }
+}
+
+// KPI Modal
+.kpi-modal {
+  width: 650px;
+  padding: 32px;
+}
+
+.kpi-trend {
+  color: var(--luxe-emerald);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.kpi-overview {
+  text-align: center;
+  margin-bottom: 32px;
+  padding: 24px;
+  background: var(--theme-glass);
+  border-radius: 16px;
+  border: 1px solid var(--theme-border);
+}
+
+.kpi-main-value {
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--luxe-gold);
+  margin-bottom: 8px;
+  font-family: 'Playfair Display', serif;
+}
+
+.kpi-change {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--luxe-emerald);
+}
+
+.kpi-breakdown {
+  margin-bottom: 24px;
+}
+
+.kpi-breakdown h3 {
+  color: var(--theme-text);
+  margin-bottom: 16px;
+}
+
+.breakdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--theme-border);
+}
+
+.breakdown-label {
+  color: var(--theme-text);
+  font-weight: 600;
+}
+
+.breakdown-value {
+  color: var(--luxe-gold);
+  font-weight: 700;
+}
+
+.breakdown-change {
+  color: var(--luxe-emerald);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.kpi-insights h3 {
+  color: var(--theme-text);
+  margin-bottom: 12px;
+}
+
+.kpi-insights ul {
+  list-style: none;
+  padding: 0;
+}
+
+.kpi-insights li {
+  padding: 8px 0;
+  color: var(--theme-textSecondary);
+  position: relative;
+  padding-left: 20px;
+  
+  &::before {
+    content: '💡';
+    position: absolute;
+    left: 0;
   }
 }

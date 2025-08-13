@@ -16,6 +16,13 @@
         </div>
 
         <div class="executive-controls">
+          <button @click="sendToEmail" class="email-btn">
+            📧 Email Report
+          </button>
+          <div class="profile-mini">
+            <img :src="currentExecutive.avatar" :alt="currentExecutive.name" class="mini-avatar" />
+            <span class="mini-name">{{ currentExecutive.name }}</span>
+          </div>
           <button @click="toggleTheme" class="theme-toggle">
             {{ isDark ? '☀️' : '🌙' }}
           </button>
@@ -26,9 +33,10 @@
     <!-- Main Content -->
     <div class="main-content">
       <div class="container">
-        <!-- Executive Summary -->
+        <!-- Executive Profile & Summary -->
         <div class="executive-summary">
           <div class="summary-header">
+
             <h1 class="executive-title">Executive Command Center</h1>
             <div class="summary-meta">
               <div class="meta-item">
@@ -40,12 +48,21 @@
               <div class="meta-item">
                 <span>🌍 Global Operations Live</span>
               </div>
+              <div class="meta-item">
+                <span>⏰ Session: {{ sessionTime }}</span>
+              </div>
             </div>
           </div>
           
           <div class="executive-controls">
             <button @click="generateReport" class="btn-primary">
               📊 Board Presentation
+            </button>
+            <button @click="openAnalytics" class="btn-secondary">
+              📈 Analytics Suite
+            </button>
+            <button @click="openSecurityCenter" class="btn-tertiary">
+              🛡️ Security Center
             </button>
           </div>
         </div>
@@ -168,6 +185,366 @@
             </div>
           </div>
         </div>
+
+        <!-- Network Topology -->
+        <div class="network-section">
+          <div class="section-title">Network Infrastructure</div>
+          <div class="network-container">
+            <svg class="network-svg" viewBox="0 0 800 400">
+              <!-- Connection Lines -->
+              <g class="connections">
+                <path v-for="connection in networkConnections" 
+                      :key="connection.id"
+                      :d="connection.path"
+                      :stroke="getConnectionColor(connection.status)"
+                      :stroke-width="getConnectionWidth(connection.bandwidth)"
+                      fill="none"
+                      class="connection-line"
+                      :class="connection.status">
+                  <animate attributeName="stroke-dasharray" 
+                           values="0,10;10,0;0,10" 
+                           dur="2s" 
+                           repeatCount="indefinite" 
+                           v-if="connection.animated" />
+                </path>
+              </g>
+              
+              <!-- Network Nodes -->
+              <g class="nodes">
+                <g v-for="node in networkNodes" 
+                   :key="node.id"
+                   :transform="`translate(${node.x}, ${node.y})`"
+                   @click="selectNetworkNode(node)"
+                   class="network-node"
+                   :class="node.type">
+                  
+                  <!-- Node Glow -->
+                  <circle :r="node.size + 8" 
+                          :fill="getNodeGlow(node.type)"
+                          opacity="0.3"
+                          class="node-glow" />
+                  
+                  <!-- Main Node -->
+                  <circle :r="node.size" 
+                          :fill="getNodeColor(node.type)"
+                          stroke="white"
+                          stroke-width="2"
+                          class="node-circle" />
+                  
+                  <!-- Node Icon -->
+                  <text font-size="16"
+                        text-anchor="middle"
+                        dominant-baseline="central"
+                        fill="white"
+                        class="node-icon">
+                    {{ getNodeIcon(node.type) }}
+                  </text>
+                  
+                  <!-- Status Indicator -->
+                  <circle :cx="node.size * 0.7"
+                          :cy="-node.size * 0.7"
+                          r="4"
+                          :fill="getStatusColor(node.status)"
+                          class="status-indicator" />
+                </g>
+              </g>
+            </svg>
+            
+            <div class="network-stats">
+              <div class="stat-item">
+                <div class="stat-value">{{ networkStats.totalNodes }}</div>
+                <div class="stat-label">Total Nodes</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">{{ networkStats.activeConnections }}</div>
+                <div class="stat-label">Active Connections</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">{{ networkStats.throughput }}</div>
+                <div class="stat-label">Throughput</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">{{ networkStats.latency }}</div>
+                <div class="stat-label">Avg Latency</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Voice Command Center -->
+        <div class="voice-section">
+          <div class="section-title">AI Voice Assistant</div>
+          <div class="voice-container">
+            <div class="voice-visualizer">
+              <div class="waveform">
+                <div v-for="i in 12" :key="i"
+                     class="wave-bar"
+                     :style="getWaveBarStyle(i)"></div>
+              </div>
+              
+              <div v-if="isListening" class="listening-indicator">
+                <div class="pulse-ring"></div>
+                <div class="mic-icon">🎤</div>
+              </div>
+            </div>
+            
+            <div class="voice-controls">
+              <button @click="toggleListening" 
+                      class="voice-btn"
+                      :class="{ active: isListening }">
+                {{ isListening ? 'Stop Listening' : 'Start Voice Command' }}
+              </button>
+              
+              <div class="voice-status">
+                {{ isListening ? 'Listening...' : 'Ready for voice commands' }}
+              </div>
+            </div>
+            
+            <div class="voice-commands">
+              <div class="command-title">Quick Voice Commands:</div>
+              <div class="command-list">
+                <button v-for="cmd in voiceCommands" :key="cmd"
+                        @click="executeVoiceCommand(cmd)"
+                        class="voice-cmd-btn">
+                  {{ cmd }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Advanced Analytics Dashboard -->
+        <div class="analytics-section">
+          <div class="section-title">Advanced Analytics Suite</div>
+          <div class="analytics-grid">
+            <div class="analytics-card">
+              <div class="card-header">
+                <h3>📊 Revenue Forecasting</h3>
+                <button @click="refreshAnalytics('revenue')" class="refresh-btn">🔄</button>
+              </div>
+              <div class="forecast-chart">
+                <div class="chart-bars">
+                  <div v-for="(month, index) in forecastData" :key="index" 
+                       class="forecast-bar"
+                       :style="{ height: month.height + '%', animationDelay: index * 0.1 + 's' }">
+                    <div class="bar-value">${{ month.value }}M</div>
+                    <div class="bar-label">{{ month.month }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="analytics-card">
+              <div class="card-header">
+                <h3>🎯 Performance Metrics</h3>
+                <button @click="refreshAnalytics('performance')" class="refresh-btn">🔄</button>
+              </div>
+              <div class="metrics-grid">
+                <div v-for="metric in performanceMetrics" :key="metric.name" class="metric-item">
+                  <div class="metric-circle" :style="{ background: `conic-gradient(var(--luxe-gold) ${metric.value}%, var(--luxe-obsidian) 0%)` }">
+                    <div class="metric-inner">
+                      <span class="metric-value">{{ metric.value }}%</span>
+                    </div>
+                  </div>
+                  <div class="metric-name">{{ metric.name }}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="analytics-card">
+              <div class="card-header">
+                <h3>🌍 Global Insights</h3>
+                <button @click="refreshAnalytics('global')" class="refresh-btn">🔄</button>
+              </div>
+              <div class="global-stats">
+                <div v-for="region in globalStats" :key="region.name" class="region-stat">
+                  <div class="region-flag">{{ region.flag }}</div>
+                  <div class="region-info">
+                    <div class="region-name">{{ region.name }}</div>
+                    <div class="region-growth" :class="region.trend">
+                      {{ region.growth }}% {{ region.trend === 'up' ? '↗️' : '↘️' }}
+                    </div>
+                  </div>
+                  <div class="region-revenue">${{ region.revenue }}M</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-time Monitoring -->
+        <div class="monitoring-section">
+          <div class="section-title">Real-time System Monitoring</div>
+          <div class="monitoring-grid">
+            <div class="monitor-card">
+              <div class="monitor-header">
+                <h3>🖥️ System Health</h3>
+                <div class="status-indicator" :class="systemHealth.status"></div>
+              </div>
+              <div class="health-metrics">
+                <div v-for="metric in systemHealth.metrics" :key="metric.name" class="health-item">
+                  <div class="health-label">{{ metric.name }}</div>
+                  <div class="health-bar">
+                    <div class="health-fill" :style="{ width: metric.value + '%', background: getHealthColor(metric.value) }"></div>
+                  </div>
+                  <div class="health-value">{{ metric.value }}%</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="monitor-card">
+              <div class="monitor-header">
+                <h3>📡 API Performance</h3>
+                <div class="api-status">{{ apiMetrics.totalRequests }} req/min</div>
+              </div>
+              <div class="api-chart">
+                <div class="response-times">
+                  <div v-for="(time, index) in apiMetrics.responseTimes" :key="index"
+                       class="response-bar"
+                       :style="{ height: time + 'px', animationDelay: index * 0.05 + 's' }">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="monitor-card">
+              <div class="monitor-header">
+                <h3>🔒 Security Dashboard</h3>
+                <div class="security-level" :class="securityStatus.level">{{ securityStatus.level.toUpperCase() }}</div>
+              </div>
+              <div class="security-alerts">
+                <div v-for="alert in securityStatus.alerts" :key="alert.id" class="alert-item" :class="alert.severity">
+                  <div class="alert-icon">{{ alert.icon }}</div>
+                  <div class="alert-text">{{ alert.message }}</div>
+                  <div class="alert-time">{{ alert.time }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Executive Reports -->
+        <div class="reports-section">
+          <div class="section-title">Executive Reports & Insights</div>
+          <div class="reports-grid">
+            <div v-for="report in executiveReports" :key="report.id" 
+                 class="report-card"
+                 @click="generateReport(report)">
+              <div class="report-icon">{{ report.icon }}</div>
+              <div class="report-info">
+                <h3>{{ report.title }}</h3>
+                <p>{{ report.description }}</p>
+                <div class="report-meta">
+                  <span class="report-type">{{ report.type }}</span>
+                  <span class="report-time">{{ report.lastGenerated }}</span>
+                </div>
+              </div>
+              <div class="report-action">
+                <button class="generate-btn">Generate</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quantum Intelligence Engine -->
+        <div class="quantum-section">
+          <div class="section-title">🔮 Quantum Intelligence Engine</div>
+          <div class="quantum-grid">
+            <div class="quantum-card">
+              <div class="quantum-core">
+                <div class="quantum-particles">
+                  <div v-for="i in 8" :key="i" class="particle" :style="getParticleAnimation(i)"></div>
+                </div>
+                <div class="quantum-center">
+                  <div class="quantum-pulse"></div>
+                  <div class="quantum-text">AI NEXUS</div>
+                </div>
+              </div>
+              <div class="quantum-stats">
+                <div class="quantum-stat">
+                  <div class="stat-value">{{ quantumMetrics.processingPower }}</div>
+                  <div class="stat-label">Quantum Processing</div>
+                </div>
+                <div class="quantum-stat">
+                  <div class="stat-value">{{ quantumMetrics.predictions }}</div>
+                  <div class="stat-label">Active Predictions</div>
+                </div>
+                <div class="quantum-stat">
+                  <div class="stat-value">{{ quantumMetrics.accuracy }}%</div>
+                  <div class="stat-label">Accuracy Rate</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="neural-network">
+              <div class="network-title">Neural Pathways</div>
+              <div class="neural-grid">
+                <div v-for="(node, index) in neuralNodes" :key="index" 
+                     class="neural-node"
+                     :class="node.active ? 'active' : ''"
+                     :style="{ animationDelay: index * 0.1 + 's' }">
+                  <div class="node-core"></div>
+                  <div class="node-connections">
+                    <div v-for="j in node.connections" :key="j" class="connection-line"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Biometric Security Center -->
+        <div class="biometric-section">
+          <div class="section-title">🔬 Biometric Security Center</div>
+          <div class="biometric-grid">
+            <div class="biometric-scanner">
+              <div class="scanner-display">
+                <div class="fingerprint-scanner">
+                  <div class="fingerprint-pattern">
+                    <div v-for="i in 12" :key="i" class="print-line" :style="{ animationDelay: i * 0.1 + 's' }"></div>
+                  </div>
+                  <div class="scan-beam"></div>
+                </div>
+                <div class="scan-status">{{ biometricStatus.status }}</div>
+              </div>
+              <div class="biometric-data">
+                <div class="bio-item">
+                  <span class="bio-label">Identity Confidence:</span>
+                  <span class="bio-value">{{ biometricStatus.confidence }}%</span>
+                </div>
+                <div class="bio-item">
+                  <span class="bio-label">Last Scan:</span>
+                  <span class="bio-value">{{ biometricStatus.lastScan }}</span>
+                </div>
+                <div class="bio-item">
+                  <span class="bio-label">Access Level:</span>
+                  <span class="bio-value">{{ biometricStatus.accessLevel }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="security-logs">
+              <div class="logs-header">
+                <h3>Security Access Logs</h3>
+                <button @click="exportLogs" class="export-btn">📤 Export</button>
+              </div>
+              <div class="logs-list">
+                <div v-for="log in securityLogs" :key="log.id" class="log-entry" :class="log.type">
+                  <div class="log-icon">{{ log.icon }}</div>
+                  <div class="log-details">
+                    <div class="log-action">{{ log.action }}</div>
+                    <div class="log-meta">
+                      <span class="log-user">{{ log.user }}</span>
+                      <span class="log-time">{{ log.timestamp }}</span>
+                      <span class="log-location">{{ log.location }}</span>
+                    </div>
+                  </div>
+                  <div class="log-status" :class="log.status">{{ log.status }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -179,7 +556,7 @@
 </template>
 
 <script setup>
-const isDark = ref(false)
+const isDark = ref(true)
 const notification = ref(null)
 
 const toggleTheme = () => {
@@ -198,7 +575,10 @@ const offices = [
   { id: 2, city: 'London', x: 50, y: 25, tier: 'regional' },
   { id: 3, city: 'Tokyo', x: 82, y: 38, tier: 'regional' },
   { id: 4, city: 'Singapore', x: 78, y: 52, tier: 'branch' },
-  { id: 5, city: 'Dubai', x: 58, y: 42, tier: 'branch' }
+  { id: 5, city: 'Dubai', x: 58, y: 42, tier: 'branch' },
+  { id: 6, city: 'Cape Town', x: 52, y: 78, tier: 'regional' },
+  { id: 7, city: 'Sandton', x: 54, y: 72, tier: 'branch' },
+  { id: 8, city: 'Cairo', x: 55, y: 48, tier: 'branch' }
 ]
 
 const stocks = [
@@ -266,9 +646,214 @@ const particles = Array.from({ length: 8 }, (_, i) => ({
   size: Math.random() * 6 + 2
 }))
 
-const hologramStyle = computed(() => ({
-  transform: `rotateX(${hologramMouseY.value * 0.1}deg) rotateY(${hologramMouseX.value * 0.1 + hologramRotation.value}deg)`
+// Network Topology Data
+const networkNodes = [
+  { id: 1, name: 'Core Router', type: 'router', x: 400, y: 200, size: 25, status: 'online' },
+  { id: 2, name: 'Web Server 1', type: 'server', x: 200, y: 100, size: 20, status: 'online' },
+  { id: 3, name: 'Web Server 2', type: 'server', x: 600, y: 100, size: 20, status: 'online' },
+  { id: 4, name: 'Database', type: 'database', x: 400, y: 50, size: 22, status: 'online' },
+  { id: 5, name: 'Load Balancer', type: 'balancer', x: 400, y: 350, size: 18, status: 'online' },
+  { id: 6, name: 'Firewall', type: 'security', x: 100, y: 200, size: 16, status: 'warning' },
+  { id: 7, name: 'CDN Edge', type: 'cdn', x: 700, y: 300, size: 18, status: 'online' }
+]
+
+const networkConnections = [
+  { id: 1, path: 'M 400 200 L 200 100', status: 'active', bandwidth: 0.8, animated: true },
+  { id: 2, path: 'M 400 200 L 600 100', status: 'active', bandwidth: 0.7, animated: true },
+  { id: 3, path: 'M 400 200 L 400 50', status: 'active', bandwidth: 0.9, animated: true },
+  { id: 4, path: 'M 400 200 L 400 350', status: 'active', bandwidth: 0.6, animated: true },
+  { id: 5, path: 'M 400 200 L 100 200', status: 'warning', bandwidth: 0.3, animated: false },
+  { id: 6, path: 'M 400 200 L 700 300', status: 'active', bandwidth: 0.5, animated: true }
+]
+
+const networkStats = {
+  totalNodes: 7,
+  activeConnections: 6,
+  throughput: '2.4 Gbps',
+  latency: '12ms'
+}
+
+// Voice Command Data
+const isListening = ref(false)
+const waveAmplitudes = ref(Array(12).fill(0))
+
+const voiceCommands = [
+  'Show revenue report',
+  'Update dashboard',
+  'Generate forecast',
+  'Export data',
+  'Security status'
+]
+
+// Advanced Analytics Data
+const forecastData = [
+  { month: 'Jan', value: 2.8, height: 60 },
+  { month: 'Feb', value: 3.2, height: 70 },
+  { month: 'Mar', value: 3.8, height: 85 },
+  { month: 'Apr', value: 4.2, height: 95 },
+  { month: 'May', value: 4.8, height: 100 },
+  { month: 'Jun', value: 5.2, height: 90 }
+]
+
+const performanceMetrics = [
+  { name: 'Efficiency', value: 94 },
+  { name: 'Quality', value: 87 },
+  { name: 'Speed', value: 92 },
+  { name: 'Reliability', value: 96 }
+]
+
+const globalStats = [
+  { name: 'North America', flag: '🇺🇸', growth: 23.5, trend: 'up', revenue: 12.8 },
+  { name: 'Europe', flag: '🇪🇺', growth: 18.2, trend: 'up', revenue: 8.4 },
+  { name: 'Asia Pacific', flag: '🌏', growth: 31.7, trend: 'up', revenue: 6.2 },
+  { name: 'Africa', flag: '🌍', growth: 42.1, trend: 'up', revenue: 1.1 }
+]
+
+// System Monitoring Data
+const systemHealth = {
+  status: 'healthy',
+  metrics: [
+    { name: 'CPU Usage', value: 68 },
+    { name: 'Memory', value: 74 },
+    { name: 'Disk I/O', value: 45 },
+    { name: 'Network', value: 82 }
+  ]
+}
+
+const apiMetrics = {
+  totalRequests: 1247,
+  responseTimes: [45, 52, 38, 61, 43, 55, 49, 67, 41, 58, 46, 53, 39, 62, 48]
+}
+
+const securityStatus = {
+  level: 'secure',
+  alerts: [
+    { id: 1, severity: 'info', icon: '🛡️', message: 'All systems secure', time: '2 min ago' },
+    { id: 2, severity: 'warning', icon: '⚠️', message: 'Unusual login pattern detected', time: '15 min ago' },
+    { id: 3, severity: 'info', icon: '🔐', message: 'SSL certificates renewed', time: '1 hour ago' }
+  ]
+}
+
+// Executive Profile System
+const currentExecutive = ref({
+  name: 'Wisani Chauke',
+  title: 'Chief Executive Officer & Founder',
+  avatar: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzIiIGZpbGw9InVybCgjZ3JhZGllbnQwKSIvPgo8Y2lyY2xlIGN4PSIzMiIgY3k9IjI0IiByPSIxMiIgZmlsbD0iI0ZGRiIvPgo8cGF0aCBkPSJNMTYgNTZjMC0xMiA3LjE2LTIwIDE2LTIwczE2IDggMTYgMjB2OEgxNnYtOHoiIGZpbGw9IiNGRkYiLz4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQwIiB4MT0iMCIgeTE9IjAiIHgyPSI2NCIgeTI9IjY0IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiNENEFGMzciLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMUUzQThBIi8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPHN2Zz4K',
+  clearanceLevel: 'FOUNDER ACCESS',
+  status: 'online',
+  lastLogin: '2024-01-15 09:23:45 UTC',
+  sessionId: 'WC-FOUNDER-ALPHA'
+})
+
+const sessionTime = ref('00:00:00')
+const sessionStart = Date.now()
+
+// Executive Reports
+const executiveReports = [
+  {
+    id: 1,
+    title: 'Quantum Business Intelligence',
+    description: 'AI-powered strategic insights with predictive modeling',
+    type: 'Strategic AI',
+    icon: '🔮',
+    lastGenerated: '2 hours ago'
+  },
+  {
+    id: 2,
+    title: 'Galactic Risk Assessment',
+    description: 'Multi-dimensional risk analysis across all sectors',
+    type: 'Risk Intelligence',
+    icon: '🛡️',
+    lastGenerated: '4 hours ago'
+  },
+  {
+    id: 3,
+    title: 'Neural Market Analysis',
+    description: 'Deep learning market predictions and opportunities',
+    type: 'Market AI',
+    icon: '🧠',
+    lastGenerated: '1 hour ago'
+  },
+  {
+    id: 4,
+    title: 'Hyperdimensional Finance',
+    description: 'Quantum financial modeling and cash flow optimization',
+    type: 'Financial Quantum',
+    icon: '💎',
+    lastGenerated: '30 minutes ago'
+  }
+]
+
+// Quantum Intelligence
+const quantumMetrics = {
+  processingPower: '847.2 TFLOPS',
+  predictions: '2,847',
+  accuracy: 99.7
+}
+
+const neuralNodes = Array.from({ length: 16 }, (_, i) => ({
+  active: Math.random() > 0.3,
+  connections: Math.floor(Math.random() * 4) + 1
 }))
+
+// Biometric Security
+const biometricStatus = {
+  status: 'AUTHENTICATED',
+  confidence: 99.8,
+  lastScan: '09:23:45',
+  accessLevel: 'COSMIC'
+}
+
+const securityLogs = [
+  {
+    id: 1,
+    action: 'Biometric Authentication',
+    user: 'Wisani Chauke',
+    timestamp: '09:23:45',
+    location: 'Executive Suite',
+    status: 'success',
+    type: 'auth',
+    icon: '🔐'
+  },
+  {
+    id: 2,
+    action: 'Quantum Encryption Activated',
+    user: 'System',
+    timestamp: '09:23:46',
+    location: 'Global Network',
+    status: 'success',
+    type: 'security',
+    icon: '🛡️'
+  },
+  {
+    id: 3,
+    action: 'Neural Network Sync',
+    user: 'AI Core',
+    timestamp: '09:24:12',
+    location: 'Data Center Alpha',
+    status: 'success',
+    type: 'system',
+    icon: '🧠'
+  },
+  {
+    id: 4,
+    action: 'Unauthorized Access Attempt',
+    user: 'Unknown',
+    timestamp: '08:47:23',
+    location: 'External IP',
+    status: 'blocked',
+    type: 'threat',
+    icon: '⚠️'
+  }
+]
+
+const hologramStyle = computed(() => {
+  const maxRotationX = Math.max(-15, Math.min(15, hologramMouseY.value * 0.05))
+  const maxRotationY = Math.max(-20, Math.min(20, hologramMouseX.value * 0.05)) + (hologramRotation.value % 360)
+  return {
+    transform: `rotateX(${maxRotationX}deg) rotateY(${maxRotationY}deg)`
+  }
+})
 
 const showNotification = (message, type = 'info') => {
   notification.value = { message, type }
@@ -277,9 +862,150 @@ const showNotification = (message, type = 'info') => {
   }, 3000)
 }
 
-const generateReport = () => {
-  showNotification('Executive board presentation generated successfully!', 'success')
+const generateReport = (report = null) => {
+  if (report) {
+    showNotification(`${report.title} generated successfully! 📊`, 'success')
+  } else {
+    showNotification('Executive board presentation generated successfully!', 'success')
+  }
 }
+
+
+
+const getHealthColor = (value) => {
+  if (value >= 80) return 'var(--luxe-emerald)'
+  if (value >= 60) return 'var(--luxe-amber)'
+  return 'var(--luxe-crimson)'
+}
+
+const showSecurityLogs = () => {
+  showNotification('🔐 Security logs accessed - Quantum encrypted transmission initiated', 'info')
+}
+
+const switchProfile = () => {
+  showNotification('👤 Biometric scanner activated - Place finger on scanner', 'info')
+}
+
+const sendToEmail = () => {
+  showNotification('📧 Executive report sent to wisanichauke@stratos.com', 'success')
+}
+
+const openAnalytics = () => {
+  showNotification('📈 Advanced Analytics Suite - Opening quantum data models...', 'info')
+}
+
+const openSecurityCenter = () => {
+  showNotification('🛡️ Security Center - Accessing biometric protocols...', 'info')
+}
+
+const refreshAnalytics = (type) => {
+  const messages = {
+    revenue: '💰 Revenue forecasting models updated with quantum algorithms',
+    performance: '⚡ Performance metrics synchronized with neural networks', 
+    global: '🌍 Global insights refreshed - African markets showing 42% growth'
+  }
+  showNotification(messages[type] || 'Analytics refreshed', 'success')
+}
+
+const switchDataset = (dataset) => {
+  const insights = {
+    Revenue: '💎 Revenue data: Q4 projections exceed targets by 23%',
+    Users: '👥 User analytics: 847K active executives globally',
+    Performance: '🚀 Performance data: 99.7% uptime across all quantum nodes'
+  }
+  currentDataset.value = dataset
+  showNotification(insights[dataset], 'info')
+}
+
+const selectDataPoint = (bar) => {
+  showNotification(`📊 ${bar.label}: ${bar.value} - Quantum analysis: Trend positive, confidence 94.2%`, 'info')
+}
+
+const selectNetworkNode = (node) => {
+  const nodeData = {
+    router: '⚡ Core Router: 2.4 Tbps throughput, quantum encrypted',
+    server: '🖥️ Web Server: 99.9% uptime, neural load balancing active',
+    database: '🗄️ Database: 847TB processed, blockchain verified',
+    balancer: '⚖️ Load Balancer: AI-optimized traffic distribution',
+    security: '🛡️ Firewall: 12,847 threats blocked today',
+    cdn: '🌐 CDN Edge: Global latency optimized to 8ms'
+  }
+  showNotification(nodeData[node.type] || `${node.name} - Status: ${node.status}`, 'info')
+}
+
+const executeVoiceCommand = (command) => {
+  const responses = {
+    'Show revenue report': '📊 Revenue dashboard activated - $28.5M quarterly performance',
+    'Update dashboard': '🔄 Dashboard synchronized with quantum data streams',
+    'Generate forecast': '🔮 AI forecast generated - 31% growth predicted next quarter',
+    'Export data': '📤 Data export initiated - Quantum encrypted file ready',
+    'Security status': '🛡️ All systems secure - Biometric authentication active'
+  }
+  showNotification(`🎤 Voice: "${command}" - ${responses[command] || 'Command processed'}`, 'info')
+}
+
+const generateReport = (report = null) => {
+  if (report) {
+    const reportData = {
+      1: '🔮 Quantum Business Intelligence generated - 847 strategic insights identified',
+      2: '🛡️ Galactic Risk Assessment complete - Risk level: MINIMAL across all sectors', 
+      3: '🧠 Neural Market Analysis ready - 23 high-value opportunities detected',
+      4: '💎 Hyperdimensional Finance report - Cash flow optimized by 18.7%'
+    }
+    showNotification(reportData[report.id] || `${report.title} generated successfully!`, 'success')
+  } else {
+    showNotification('📊 Executive board presentation generated - 47 slides with quantum insights', 'success')
+  }
+}
+
+const exportLogs = () => {
+  showNotification('📤 Security logs exported - Quantum encrypted file generated', 'success')
+}
+
+const getParticleAnimation = (index) => ({
+  animationDelay: `${index * 0.2}s`,
+  transform: `rotate(${index * 45}deg) translateX(40px)`
+})
+
+// Update session timer
+let sessionTimer
+onMounted(() => {
+  // Existing intervals...
+  tickerInterval = setInterval(() => {
+    tickerPosition.value -= 1
+    if (tickerPosition.value <= -800) {
+      tickerPosition.value = 0
+    }
+  }, 50)
+  
+  hologramInterval = setInterval(() => {
+    hologramRotation.value += 0.5
+  }, 100)
+  
+  // Session timer
+  sessionTimer = setInterval(() => {
+    const elapsed = Date.now() - sessionStart
+    const hours = Math.floor(elapsed / 3600000)
+    const minutes = Math.floor((elapsed % 3600000) / 60000)
+    const seconds = Math.floor((elapsed % 60000) / 1000)
+    sessionTime.value = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+  }, 1000)
+  
+  // Neural network animation
+  setInterval(() => {
+    neuralNodes.forEach(node => {
+      if (Math.random() > 0.7) {
+        node.active = !node.active
+      }
+    })
+  }, 2000)
+})
+
+onUnmounted(() => {
+  if (tickerInterval) clearInterval(tickerInterval)
+  if (hologramInterval) clearInterval(hologramInterval)
+  if (sessionTimer) clearInterval(sessionTimer)
+})
 
 const showKPIDetails = (kpi) => {
   showNotification(`Opening detailed analytics for ${kpi.title}`, 'info')
@@ -379,6 +1105,112 @@ const selectDataPoint = (bar) => {
   showNotification(`${bar.label}: ${bar.value} - Detailed analysis available`, 'info')
 }
 
+// Network functions
+const selectNetworkNode = (node) => {
+  showNotification(`${node.name} - Status: ${node.status} - Type: ${node.type}`, 'info')
+}
+
+const getNodeColor = (type) => {
+  const colors = {
+    router: '#1A237E',
+    server: '#2196F3',
+    database: '#4CAF50',
+    balancer: '#FF9800',
+    security: '#F44336',
+    cdn: '#9C27B0'
+  }
+  return colors[type] || '#666'
+}
+
+const getNodeGlow = (type) => getNodeColor(type)
+
+const getNodeIcon = (type) => {
+  const icons = {
+    router: '⚡',
+    server: '🖥️',
+    database: '🗄️',
+    balancer: '⚖️',
+    security: '🛡️',
+    cdn: '🌐'
+  }
+  return icons[type] || '●'
+}
+
+const getStatusColor = (status) => {
+  const colors = {
+    online: '#4CAF50',
+    warning: '#FF9800',
+    error: '#F44336',
+    offline: '#666'
+  }
+  return colors[status] || '#666'
+}
+
+const getConnectionColor = (status) => {
+  const colors = {
+    active: '#00ff00',
+    warning: '#ff9800',
+    error: '#ff0000'
+  }
+  return colors[status] || '#666'
+}
+
+const getConnectionWidth = (bandwidth) => Math.max(1, bandwidth * 4)
+
+// Voice functions
+const toggleListening = () => {
+  isListening.value = !isListening.value
+  
+  if (isListening.value) {
+    startListening()
+  } else {
+    stopListening()
+  }
+}
+
+const startListening = () => {
+  // Animate wave bars
+  const animateWaves = () => {
+    if (isListening.value) {
+      waveAmplitudes.value = waveAmplitudes.value.map(() => Math.random())
+      setTimeout(animateWaves, 100)
+    }
+  }
+  animateWaves()
+  
+  // Simulate voice recognition after 3 seconds
+  setTimeout(() => {
+    if (isListening.value) {
+      const commands = [
+        'Show me the revenue dashboard',
+        'What are today\'s key metrics?',
+        'Generate quarterly report',
+        'Update team performance data'
+      ]
+      const command = commands[Math.floor(Math.random() * commands.length)]
+      executeVoiceCommand(command)
+      isListening.value = false
+    }
+  }, 3000)
+}
+
+const stopListening = () => {
+  waveAmplitudes.value = Array(12).fill(0)
+}
+
+const executeVoiceCommand = (command) => {
+  showNotification(`Voice Command: "${command}" - Processing...`, 'info')
+}
+
+const getWaveBarStyle = (index) => {
+  const amplitude = waveAmplitudes.value[index - 1] || 0
+  return {
+    height: `${Math.max(4, amplitude * 40)}px`,
+    backgroundColor: isListening.value ? '#00ff00' : '#666',
+    opacity: isListening.value ? 0.8 : 0.3
+  }
+}
+
 // Auto rotation for hologram
 let hologramInterval
 onMounted(() => {
@@ -444,9 +1276,9 @@ onUnmounted(() => {
 .logo-core {
   width: 20px;
   height: 20px;
-  background: linear-gradient(45deg, #D4AF37, #F59E0B);
+  background: var(--royal-gradient);
   border-radius: 50%;
-  box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+  box-shadow: var(--gold-glow);
   animation: glow 3s ease-in-out infinite alternate;
 }
 
@@ -454,7 +1286,7 @@ onUnmounted(() => {
   font-size: 28px;
   font-weight: 800;
   font-family: 'Playfair Display', serif;
-  background: linear-gradient(135deg, #D4AF37, #F59E0B);
+  background: var(--royal-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -503,12 +1335,18 @@ onUnmounted(() => {
   border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: 24px;
   padding: 32px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 32px;
   position: relative;
   overflow: hidden;
+}
+
+.executive-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-top: 24px;
 }
 
 .executive-summary::before {
@@ -518,14 +1356,14 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(135deg, #D4AF37, #F59E0B);
+  background: linear-gradient(135deg, #007AFF, #5856D6);
 }
 
 .executive-title {
   font-size: 42px;
   font-weight: 800;
   font-family: 'Playfair Display', serif;
-  background: linear-gradient(135deg, #D4AF37, #F59E0B);
+  background: var(--royal-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -548,7 +1386,7 @@ onUnmounted(() => {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #D4AF37, #F59E0B);
+  background: var(--royal-gradient);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -556,11 +1394,12 @@ onUnmounted(() => {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: var(--gold-glow);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 122, 255, 0.3);
 }
 
 .kpi-grid {
@@ -774,3 +1613,1024 @@ onUnmounted(() => {
   }
 }
 </style>
+// Advanced Analytics Styling
+.analytics-section {
+  margin-bottom: 32px;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 24px;
+}
+
+.analytics-card {
+  background: var(--theme-glass);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--theme-border);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: var(--luxe-shadow);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--luxe-shadow), var(--gold-glow);
+  }
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--theme-text);
+    margin: 0;
+  }
+}
+
+.refresh-btn {
+  background: var(--royal-gradient);
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: rotate(180deg);
+  }
+}
+
+.forecast-chart {
+  height: 200px;
+  position: relative;
+}
+
+.chart-bars {
+  display: flex;
+  align-items: end;
+  justify-content: space-around;
+  height: 100%;
+  padding: 20px 0;
+}
+
+.forecast-bar {
+  width: 40px;
+  background: var(--royal-gradient);
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  animation: barGrow 1s ease-out;
+  box-shadow: var(--gold-glow);
+  
+  .bar-value {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--luxe-gold);
+  }
+  
+  .bar-label {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    color: var(--theme-textSecondary);
+  }
+}
+
+@keyframes barGrow {
+  from { height: 0; }
+  to { height: var(--final-height); }
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.metric-item {
+  text-align: center;
+}
+
+.metric-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 8px;
+  position: relative;
+}
+
+.metric-inner {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--theme-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metric-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--theme-text);
+}
+
+.metric-name {
+  font-size: 12px;
+  color: var(--theme-textSecondary);
+}
+
+.global-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.region-stat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(212, 175, 55, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.region-flag {
+  font-size: 24px;
+}
+
+.region-info {
+  flex: 1;
+}
+
+.region-name {
+  font-weight: 600;
+  color: var(--theme-text);
+  font-size: 14px;
+}
+
+.region-growth {
+  font-size: 12px;
+  font-weight: 600;
+  
+  &.up {
+    color: var(--luxe-emerald);
+  }
+  
+  &.down {
+    color: var(--luxe-crimson);
+  }
+}
+
+.region-revenue {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--luxe-gold);
+}
+
+// Monitoring Styling
+.monitoring-section {
+  margin-bottom: 32px;
+}
+
+.monitoring-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 24px;
+}
+
+.monitor-card {
+  background: var(--theme-glass);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--theme-border);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: var(--luxe-shadow);
+}
+
+.monitor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--theme-text);
+    margin: 0;
+  }
+}
+
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  
+  &.healthy {
+    background: var(--luxe-emerald);
+    box-shadow: 0 0 10px var(--luxe-emerald);
+  }
+  
+  &.warning {
+    background: var(--luxe-amber);
+    box-shadow: 0 0 10px var(--luxe-amber);
+  }
+  
+  &.critical {
+    background: var(--luxe-crimson);
+    box-shadow: 0 0 10px var(--luxe-crimson);
+  }
+}
+
+.health-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.health-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.health-label {
+  min-width: 80px;
+  font-size: 12px;
+  color: var(--theme-textSecondary);
+}
+
+.health-bar {
+  flex: 1;
+  height: 8px;
+  background: rgba(212, 175, 55, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.health-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.health-value {
+  min-width: 40px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--theme-text);
+  text-align: right;
+}
+
+.api-status {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--luxe-sapphire);
+}
+
+.api-chart {
+  height: 120px;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+}
+
+.response-times {
+  display: flex;
+  align-items: end;
+  gap: 2px;
+  height: 100px;
+}
+
+.response-bar {
+  width: 8px;
+  background: var(--sapphire-gradient);
+  border-radius: 2px;
+  animation: barPulse 2s ease-in-out infinite;
+}
+
+@keyframes barPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.security-level {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  
+  &.secure {
+    background: rgba(15, 76, 58, 0.2);
+    color: var(--luxe-emerald);
+  }
+  
+  &.warning {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--luxe-amber);
+  }
+  
+  &.critical {
+    background: rgba(220, 38, 38, 0.2);
+    color: var(--luxe-crimson);
+  }
+}
+
+.security-alerts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.alert-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 8px;
+  
+  &.info {
+    background: rgba(59, 130, 246, 0.1);
+  }
+  
+  &.warning {
+    background: rgba(245, 158, 11, 0.1);
+  }
+  
+  &.critical {
+    background: rgba(220, 38, 38, 0.1);
+  }
+}
+
+.alert-icon {
+  font-size: 16px;
+}
+
+.alert-text {
+  flex: 1;
+  font-size: 12px;
+  color: var(--theme-text);
+}
+
+.alert-time {
+  font-size: 10px;
+  color: var(--theme-textSecondary);
+}
+
+// Executive Reports Styling
+.reports-section {
+  margin-bottom: 32px;
+}
+
+.reports-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.report-card {
+  background: var(--theme-glass);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--theme-border);
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--luxe-shadow);
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--luxe-shadow), var(--gold-glow);
+    border-color: var(--luxe-gold);
+  }
+}
+
+.report-icon {
+  font-size: 32px;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--royal-gradient);
+  border-radius: 16px;
+  box-shadow: var(--gold-glow);
+}
+
+.report-info {
+  flex: 1;
+  
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--theme-text);
+    margin: 0 0 8px 0;
+  }
+  
+  p {
+    font-size: 12px;
+    color: var(--theme-textSecondary);
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+  }
+}
+
+.report-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 10px;
+}
+
+.report-type {
+  background: rgba(212, 175, 55, 0.1);
+  color: var(--luxe-gold);
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.report-time {
+  color: var(--theme-textSecondary);
+}
+
+.generate-btn {
+  background: var(--royal-gradient);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--gold-glow);
+  }
+}
+// Executive Profile Styling
+.executive-profile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--theme-glass);
+  border-radius: 16px;
+  border: 1px solid var(--theme-border);
+}
+
+.profile-avatar {
+  position: relative;
+  
+  img {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 3px solid var(--luxe-gold);
+    box-shadow: var(--gold-glow);
+  }
+}
+
+.status-ring {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--theme-surface);
+  
+  &.online {
+    background: var(--luxe-emerald);
+    box-shadow: 0 0 10px var(--luxe-emerald);
+  }
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.exec-name {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--theme-text);
+  margin: 0 0 4px 0;
+  font-family: 'Playfair Display', serif;
+}
+
+.exec-title {
+  font-size: 14px;
+  color: var(--luxe-gold);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.exec-clearance {
+  font-size: 11px;
+  background: var(--royal-gradient);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.security-btn, .switch-btn {
+  padding: 8px 16px;
+  border: 1px solid var(--theme-border);
+  border-radius: 8px;
+  background: var(--theme-glass);
+  color: var(--theme-text);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: var(--royal-gradient);
+    color: white;
+    transform: translateY(-2px);
+  }
+}
+
+.btn-secondary {
+  background: var(--emerald-gradient);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--emerald-glow);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--emerald-glow), 0 8px 24px rgba(15, 76, 58, 0.3);
+  }
+}
+
+// Quantum Intelligence Styling
+.quantum-section {
+  margin-bottom: 32px;
+}
+
+.quantum-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.quantum-card {
+  background: var(--theme-glass);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--theme-border);
+  border-radius: 20px;
+  padding: 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.quantum-core {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 24px;
+}
+
+.quantum-particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--luxe-gold);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  animation: quantumOrbit 4s linear infinite;
+  box-shadow: 0 0 10px currentColor;
+}
+
+@keyframes quantumOrbit {
+  from { transform: rotate(0deg) translateX(80px) rotate(0deg); }
+  to { transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+}
+
+.quantum-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  background: var(--royal-gradient);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--gold-glow);
+}
+
+.quantum-pulse {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border: 2px solid var(--luxe-gold);
+  border-radius: 50%;
+  animation: quantumPulse 2s ease-in-out infinite;
+}
+
+@keyframes quantumPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.3; }
+}
+
+.quantum-text {
+  font-size: 10px;
+  font-weight: 800;
+  color: white;
+  letter-spacing: 1px;
+}
+
+.quantum-stats {
+  display: flex;
+  justify-content: space-around;
+}
+
+.quantum-stat {
+  text-align: center;
+}
+
+.neural-network {
+  background: var(--theme-glass);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--theme-border);
+  border-radius: 20px;
+  padding: 24px;
+}
+
+.network-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--theme-text);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.neural-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.neural-node {
+  width: 40px;
+  height: 40px;
+  position: relative;
+  margin: 0 auto;
+}
+
+.node-core {
+  width: 100%;
+  height: 100%;
+  background: var(--luxe-obsidian);
+  border-radius: 50%;
+  border: 2px solid var(--luxe-sapphire);
+  transition: all 0.3s ease;
+}
+
+.neural-node.active .node-core {
+  background: var(--luxe-sapphire);
+  box-shadow: var(--sapphire-glow);
+  animation: neuralPulse 1s ease-in-out infinite;
+}
+
+@keyframes neuralPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+// Biometric Security Styling
+.biometric-section {
+  margin-bottom: 32px;
+}
+
+.biometric-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.biometric-scanner {
+  background: var(--theme-glass);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--theme-border);
+  border-radius: 20px;
+  padding: 24px;
+}
+
+.scanner-display {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.fingerprint-scanner {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 16px;
+  position: relative;
+  background: radial-gradient(circle, var(--luxe-obsidian), var(--luxe-onyx));
+  border-radius: 50%;
+  border: 3px solid var(--luxe-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fingerprint-pattern {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.print-line {
+  position: absolute;
+  border: 1px solid var(--luxe-gold);
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: fingerprintScan 3s ease-in-out infinite;
+}
+
+.print-line:nth-child(1) { width: 20px; height: 20px; top: 30px; left: 30px; }
+.print-line:nth-child(2) { width: 30px; height: 30px; top: 25px; left: 25px; }
+.print-line:nth-child(3) { width: 40px; height: 40px; top: 20px; left: 20px; }
+.print-line:nth-child(4) { width: 50px; height: 50px; top: 15px; left: 15px; }
+.print-line:nth-child(5) { width: 60px; height: 60px; top: 10px; left: 10px; }
+.print-line:nth-child(6) { width: 70px; height: 70px; top: 5px; left: 5px; }
+
+@keyframes fingerprintScan {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+.scan-beam {
+  position: absolute;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent, var(--luxe-gold), transparent);
+  animation: scanBeam 2s linear infinite;
+}
+
+@keyframes scanBeam {
+  0% { left: 0; }
+  100% { left: 100%; }
+}
+
+.scan-status {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--luxe-emerald);
+  text-transform: uppercase;
+}
+
+.biometric-data {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bio-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--theme-border);
+}
+
+.bio-label {
+  font-size: 12px;
+  color: var(--theme-textSecondary);
+}
+
+.bio-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--luxe-gold);
+}
+
+.security-logs {
+  background: var(--theme-glass);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--theme-border);
+  border-radius: 20px;
+  padding: 24px;
+}
+
+.logs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--theme-text);
+    margin: 0;
+  }
+}
+
+.export-btn {
+  background: var(--sapphire-gradient);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sapphire-glow);
+  }
+}
+
+.logs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.log-entry {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  
+  &.auth {
+    background: rgba(15, 76, 58, 0.1);
+    border-left: 3px solid var(--luxe-emerald);
+  }
+  
+  &.security {
+    background: rgba(212, 175, 55, 0.1);
+    border-left: 3px solid var(--luxe-gold);
+  }
+  
+  &.system {
+    background: rgba(30, 58, 138, 0.1);
+    border-left: 3px solid var(--luxe-sapphire);
+  }
+  
+  &.threat {
+    background: rgba(220, 38, 38, 0.1);
+    border-left: 3px solid var(--luxe-crimson);
+  }
+}
+
+.log-icon {
+  font-size: 16px;
+}
+
+.log-details {
+  flex: 1;
+}
+
+.log-action {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--theme-text);
+}
+
+.log-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--theme-textSecondary);
+  margin-top: 2px;
+}
+
+.log-status {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  
+  &.success {
+    background: rgba(15, 76, 58, 0.2);
+    color: var(--luxe-emerald);
+  }
+  
+  &.blocked {
+    background: rgba(220, 38, 38, 0.2);
+    color: var(--luxe-crimson);
+  }
+}
+// Header Profile Styling
+.profile-mini {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--theme-glass);
+  border: 1px solid var(--theme-border);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: var(--royal-gradient);
+    color: white;
+    transform: translateY(-2px);
+  }
+}
+
+.mini-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--luxe-gold);
+  box-shadow: var(--gold-glow);
+}
+
+.mini-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--theme-text);
+}
+
+.profile-mini:hover .mini-name {
+  color: white;
+}
+
+.email-btn {
+  background: var(--emerald-gradient);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--emerald-glow);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--emerald-glow), 0 6px 16px rgba(15, 76, 58, 0.3);
+  }
+}
+
+.btn-tertiary {
+  background: var(--sapphire-gradient);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--sapphire-glow);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sapphire-glow), 0 8px 24px rgba(30, 58, 138, 0.3);
+  }
+}

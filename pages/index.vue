@@ -944,19 +944,7 @@ const executeVoiceCommand = (command) => {
   showNotification(`🎤 Voice: "${command}" - ${responses[command] || 'Command processed'}`, 'info')
 }
 
-const generateReport = (report = null) => {
-  if (report) {
-    const reportData = {
-      1: '🔮 Quantum Business Intelligence generated - 847 strategic insights identified',
-      2: '🛡️ Galactic Risk Assessment complete - Risk level: MINIMAL across all sectors', 
-      3: '🧠 Neural Market Analysis ready - 23 high-value opportunities detected',
-      4: '💎 Hyperdimensional Finance report - Cash flow optimized by 18.7%'
-    }
-    showNotification(reportData[report.id] || `${report.title} generated successfully!`, 'success')
-  } else {
-    showNotification('📊 Executive board presentation generated - 47 slides with quantum insights', 'success')
-  }
-}
+
 
 const exportLogs = () => {
   showNotification('📤 Security logs exported - Quantum encrypted file generated', 'success')

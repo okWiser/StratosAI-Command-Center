@@ -88,16 +88,25 @@
 
         <!-- KPI Grid -->
         <div class="kpi-grid">
-          <div v-for="kpi in kpis" :key="kpi.id" class="kpi-card" @click="showKPIDetails(kpi)">
-            <div class="kpi-header">
-              <div class="kpi-icon">{{ kpi.icon }}</div>
-              <div class="kpi-title">{{ kpi.title }}</div>
-            </div>
-            <div class="kpi-value">{{ kpi.value }}</div>
-            <div class="kpi-change" :class="kpi.trend">
-              {{ kpi.change > 0 ? '+' : '' }}{{ kpi.change }}%
-            </div>
-          </div>
+          <ErrorBoundary>
+            <template v-if="isLoading">
+              <SkeletonLoader v-for="i in 4" :key="i" variant="card" />
+            </template>
+            <template v-else>
+              <div v-for="kpi in kpis" :key="kpi.id" class="kpi-card" @click="showKPIDetails(kpi)">
+                <div class="kpi-header">
+                  <div class="kpi-icon">{{ kpi.icon }}</div>
+                  <div class="kpi-title">{{ kpi.title }}</div>
+                  <button @click.stop="refreshKPI(kpi.id)" class="refresh-mini">🔄</button>
+                </div>
+                <div class="kpi-value">{{ kpi.value }}</div>
+                <div class="kpi-change" :class="kpi.trend">
+                  {{ kpi.change > 0 ? '+' : '' }}{{ kpi.change }}%
+                </div>
+                <div class="last-updated">Updated: {{ formatTime(lastUpdated) }}</div>
+              </div>
+            </template>
+          </ErrorBoundary>
         </div>
 
         <!-- Live Stock Ticker -->
@@ -161,32 +170,41 @@
 
         <!-- Holographic Data Visualization -->
         <div class="hologram-section">
-          <div class="section-title">Holographic Analytics</div>
-          <div class="hologram-container" @mousemove="onHologramMouseMove">
-            <div class="hologram-stage" :style="hologramStyle">
-              <div v-for="(bar, index) in dataPoints" :key="index" 
-                   class="data-bar" 
-                   :style="getBarStyle(bar, index)"
-                   @click="selectDataPoint(bar)">
-                <div class="bar-glow"></div>
-                <div class="bar-value">{{ bar.value }}</div>
-              </div>
-              
-              <div v-for="(particle, index) in particles" :key="`particle-${index}`"
-                   class="floating-particle"
-                   :style="getParticleStyle(particle, index)">
-              </div>
-            </div>
-            
-            <div class="hologram-controls">
-              <button v-for="dataset in datasets" :key="dataset" 
-                      @click="switchDataset(dataset)"
-                      class="dataset-btn"
-                      :class="{ active: currentDataset === dataset }">
-                {{ dataset }}
-              </button>
-            </div>
+          <div class="section-title">
+            Holographic Analytics
+            <span class="data-status">🟢 Live Data</span>
           </div>
+          <ErrorBoundary>
+            <div class="hologram-container" @mousemove="onHologramMouseMove" @touchmove="onHologramTouchMove">
+              <SkeletonLoader v-if="isLoading" variant="chart" />
+              <template v-else>
+                <div class="hologram-stage" :style="hologramStyle">
+                  <div v-for="(bar, index) in dataPoints" :key="index" 
+                       class="data-bar" 
+                       :style="getBarStyle(bar, index)"
+                       @click="selectDataPoint(bar)"
+                       @touchstart="selectDataPoint(bar)">
+                    <div class="bar-glow"></div>
+                    <div class="bar-value">{{ bar.value }}</div>
+                  </div>
+                  
+                  <div v-for="(particle, index) in particles" :key="`particle-${index}`"
+                       class="floating-particle"
+                       :style="getParticleStyle(particle, index)">
+                  </div>
+                </div>
+                
+                <div class="hologram-controls">
+                  <button v-for="dataset in datasets" :key="dataset" 
+                          @click="switchDataset(dataset)"
+                          class="dataset-btn"
+                          :class="{ active: currentDataset === dataset }">
+                    {{ dataset }}
+                  </button>
+                </div>
+              </template>
+            </div>
+          </ErrorBoundary>
         </div>
 
         <!-- Interactive Globe -->
@@ -577,6 +595,9 @@
 <script setup>
 const isDark = ref(true)
 const notification = ref(null)
+const isLoading = ref(true)
+const lastUpdated = ref(new Date())
+const dataError = ref(null)
 
 const toggleTheme = () => {
   isDark.value = !isDark.value
@@ -898,6 +919,30 @@ const getHealthColor = (value) => {
   if (value >= 60) return 'var(--luxe-amber)'
   return 'var(--luxe-crimson)'
 }
+
+const formatTime = (date) => {
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+}
+
+const refreshKPI = (kpiId) => {
+  showNotification(`🔄 Refreshing KPI data...`, 'info')
+  lastUpdated.value = new Date()
+}
+
+const onHologramTouchMove = (e) => {
+  if (e.touches.length === 1) {
+    const touch = e.touches[0]
+    const rect = e.currentTarget.getBoundingClientRect()
+    hologramMouseX.value = ((touch.clientX - rect.left) / rect.width - 0.5) * 60
+    hologramMouseY.value = ((touch.clientY - rect.top) / rect.height - 0.5) * -60
+  }
+}
+
+// Simulate data loading
+setTimeout(() => {
+  isLoading.value = false
+  lastUpdated.value = new Date()
+}, 2000)
 
 const showSecurityLogs = () => {
   showNotification('🔐 Security logs accessed - Quantum encrypted transmission initiated', 'info')
@@ -1453,6 +1498,16 @@ onUnmounted(() => {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 24px;
   margin-bottom: 32px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
 }
 
 .kpi-card {
@@ -2778,5 +2833,221 @@ onUnmounted(() => {
       background: var(--luxe-crimson);
       color: white;
     }
+  }
+}
+// Loading States & Error Handling
+.refresh-mini {
+  background: transparent;
+  border: none;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    opacity: 1;
+    transform: rotate(180deg);
+  }
+}
+
+.last-updated {
+  font-size: 10px;
+  color: var(--theme-textSecondary);
+  margin-top: 8px;
+  opacity: 0.8;
+}
+
+.data-status {
+  font-size: 12px;
+  color: var(--luxe-emerald);
+  font-weight: 600;
+  margin-left: 12px;
+}
+
+// Mobile Responsiveness
+@media (max-width: 1024px) {
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .quantum-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .biometric-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .monitoring-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .executive-header {
+    padding: 12px 0;
+  }
+  
+  .header-content {
+    padding: 0 16px;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .executive-controls {
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+  
+  .profile-dropdown {
+    right: auto;
+    left: 0;
+    min-width: 260px;
+  }
+  
+  .hologram-container {
+    padding: 16px;
+    height: 300px;
+  }
+  
+  .globe-container {
+    height: 300px;
+    padding: 16px;
+  }
+  
+  .globe {
+    width: 250px;
+    height: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 16px;
+  }
+  
+  .executive-summary {
+    padding: 20px;
+  }
+  
+  .executive-title {
+    font-size: 28px;
+  }
+  
+  .summary-meta {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .kpi-card {
+    padding: 16px;
+  }
+  
+  .kpi-value {
+    font-size: 24px;
+  }
+  
+  .section-title {
+    font-size: 20px;
+  }
+  
+  .analytics-card,
+  .monitor-card,
+  .report-card {
+    padding: 16px;
+  }
+  
+  .quantum-core {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .fingerprint-scanner {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+// Touch-Friendly Interactions
+@media (hover: none) and (pointer: coarse) {
+  .kpi-card:hover,
+  .analytics-card:hover,
+  .report-card:hover {
+    transform: none;
+  }
+  
+  .kpi-card:active,
+  .analytics-card:active,
+  .report-card:active {
+    transform: scale(0.98);
+  }
+  
+  .stock-item {
+    min-height: 48px;
+    padding: 12px 24px;
+  }
+  
+  .dataset-btn,
+  .voice-cmd-btn,
+  .quick-btn {
+    min-height: 44px;
+    padding: 12px 16px;
+  }
+  
+  .theme-toggle {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+// Accessibility Improvements
+.kpi-card,
+.analytics-card,
+.report-card {
+  &:focus {
+    outline: 2px solid var(--luxe-gold);
+    outline-offset: 2px;
+  }
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-tertiary {
+  &:focus {
+    outline: 2px solid var(--luxe-gold);
+    outline-offset: 2px;
+  }
+}
+
+// High Contrast Mode Support
+@media (prefers-contrast: high) {
+  .executive-card {
+    border-width: 2px;
+  }
+  
+  .kpi-card {
+    border-width: 2px;
+  }
+  
+  .theme-text {
+    font-weight: 600;
+  }
+}
+
+// Reduced Motion Support
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .hologram-stage {
+    transform: none !important;
+  }
+  
+  .quantum-particles .particle {
+    animation: none;
   }
 }

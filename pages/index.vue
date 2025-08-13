@@ -19,9 +19,28 @@
           <button @click="sendToEmail" class="email-btn">
             📧 Email Report
           </button>
-          <div class="profile-mini">
+          <div class="profile-mini" @click="toggleProfileMenu">
             <img :src="currentExecutive.avatar" :alt="currentExecutive.name" class="mini-avatar" />
             <span class="mini-name">{{ currentExecutive.name }}</span>
+            <span class="profile-arrow">{{ showProfileMenu ? '▲' : '▼' }}</span>
+            <div v-if="showProfileMenu" class="profile-dropdown">
+              <div class="current-user">
+                <div class="user-info">
+                  <img :src="currentExecutive.avatar" :alt="currentExecutive.name" class="dropdown-avatar" />
+                  <div>
+                    <div class="dropdown-name">{{ currentExecutive.name }}</div>
+                    <div class="dropdown-title">{{ currentExecutive.title }}</div>
+                    <div class="dropdown-status">🟢 Online - {{ currentExecutive.clearanceLevel }}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="profile-actions">
+                <button @click="viewProfile" class="profile-action-btn">👤 View Profile</button>
+                <button @click="securitySettings" class="profile-action-btn">🔒 Security Settings</button>
+                <button @click="switchUser" class="profile-action-btn">🔄 Switch User</button>
+                <button @click="logout" class="profile-action-btn logout">🚪 Logout</button>
+              </div>
+            </div>
           </div>
           <button @click="toggleTheme" class="theme-toggle">
             {{ isDark ? '☀️' : '🌙' }}
@@ -848,10 +867,12 @@ const securityLogs = [
 ]
 
 const hologramStyle = computed(() => {
-  const maxRotationX = Math.max(-15, Math.min(15, hologramMouseY.value * 0.05))
-  const maxRotationY = Math.max(-20, Math.min(20, hologramMouseX.value * 0.05)) + (hologramRotation.value % 360)
+  const maxRotationX = Math.max(-10, Math.min(10, hologramMouseY.value * 0.03))
+  const baseRotation = (hologramRotation.value % 360)
+  const mouseRotation = Math.max(-15, Math.min(15, hologramMouseX.value * 0.03))
+  const totalRotationY = baseRotation + mouseRotation
   return {
-    transform: `rotateX(${maxRotationX}deg) rotateY(${maxRotationY}deg)`
+    transform: `rotateX(${maxRotationX}deg) rotateY(${totalRotationY}deg)`
   }
 })
 
@@ -884,6 +905,32 @@ const showSecurityLogs = () => {
 
 const switchProfile = () => {
   showNotification('👤 Biometric scanner activated - Place finger on scanner', 'info')
+}
+
+const showProfileMenu = ref(false)
+
+const toggleProfileMenu = () => {
+  showProfileMenu.value = !showProfileMenu.value
+}
+
+const viewProfile = () => {
+  showProfileMenu.value = false
+  showNotification('👤 Opening executive profile dashboard...', 'info')
+}
+
+const securitySettings = () => {
+  showProfileMenu.value = false
+  showNotification('🔒 Accessing quantum security protocols...', 'info')
+}
+
+const switchUser = () => {
+  showProfileMenu.value = false
+  showNotification('🔄 Biometric scanner activated - Authentication required', 'info')
+}
+
+const logout = () => {
+  showProfileMenu.value = false
+  showNotification('🚪 Secure logout initiated - Session terminated', 'info')
 }
 
 const sendToEmail = () => {
@@ -996,16 +1043,39 @@ onUnmounted(() => {
 })
 
 const showKPIDetails = (kpi) => {
-  showNotification(`Opening detailed analytics for ${kpi.title}`, 'info')
+  const kpiDetails = {
+    1: '💰 Revenue Analytics: Q4 performance +23.8% | Key drivers: Enterprise sales (+31%), Subscription growth (+18%)',
+    2: '📈 Market Growth Dashboard: Sector analysis shows 23.8% expansion | Competitive advantage: AI integration',
+    3: '⚡ Operations Excellence: 94.2% efficiency rating | Automation savings: $2.3M annually',
+    4: '🛡️ Risk Management: Current risk score 12.3 (Low) | Main concerns: Market volatility, supply chain'
+  }
+  showNotification(kpiDetails[kpi.id] || `Opening detailed analytics for ${kpi.title}`, 'info')
 }
 
 const showOfficeDetails = (office) => {
-  showNotification(`Connecting to ${office.city} office - ${office.tier} tier`, 'info')
+  const officeData = {
+    'New York': '🏢 HQ: 847 employees | Revenue: $12.8M | Status: All systems operational',
+    'London': '🇬🇧 EMEA Hub: 234 employees | Revenue: $4.2M | Status: Expansion phase active',
+    'Tokyo': '🇯🇵 APAC Center: 189 employees | Revenue: $3.8M | Status: AI research facility online',
+    'Singapore': '🇸🇬 Tech Hub: 156 employees | Revenue: $2.1M | Status: Quantum computing lab active',
+    'Dubai': '🇦🇪 MEA Office: 98 employees | Revenue: $1.8M | Status: Strategic partnerships growing',
+    'Cape Town': '🇿🇦 Africa HQ: 145 employees | Revenue: $1.4M | Status: Mining tech division expanding',
+    'Sandton': '🇿🇦 Financial Hub: 87 employees | Revenue: $980K | Status: Fintech solutions deployed',
+    'Cairo': '🇪🇬 North Africa: 76 employees | Revenue: $720K | Status: Infrastructure development'
+  }
+  showNotification(officeData[office.city] || `Connecting to ${office.city} office - ${office.tier} tier`, 'info')
 }
 
 const selectStock = (stock) => {
   selectedStock.value = stock
-  showNotification(`${stock.symbol}: $${stock.price.toFixed(2)} (${stock.change >= 0 ? '+' : ''}${stock.change.toFixed(2)}%)`, 'info')
+  const stockInsights = {
+    'AAPL': '🍎 Apple: Strong iPhone 15 sales | AI chip demand rising | Target: $185',
+    'GOOGL': '🔍 Google: Cloud revenue +28% | AI integration accelerating | Target: $2950',
+    'MSFT': '💻 Microsoft: Azure growth +31% | Copilot adoption strong | Target: $395',
+    'TSLA': '⚡ Tesla: Model Y refresh | Energy storage +45% | Target: $275',
+    'AMZN': '📦 Amazon: AWS dominance | Prime membership growth | Target: $3400'
+  }
+  showNotification(stockInsights[stock.symbol] || `${stock.symbol}: $${stock.price.toFixed(2)} (${stock.change >= 0 ? '+' : ''}${stock.change.toFixed(2)}%)`, 'info')
 }
 
 // Animate ticker
@@ -2608,5 +2678,105 @@ onUnmounted(() => {
   &:hover {
     transform: translateY(-2px);
     box-shadow: var(--sapphire-glow), 0 8px 24px rgba(30, 58, 138, 0.3);
+  }
+}
+// Profile Dropdown Styling
+.profile-mini {
+  position: relative;
+  
+  .profile-arrow {
+    font-size: 12px;
+    margin-left: 4px;
+    transition: transform 0.3s ease;
+  }
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: var(--theme-glass);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--theme-border);
+  border-radius: 16px;
+  padding: 16px;
+  min-width: 280px;
+  box-shadow: var(--luxe-shadow);
+  z-index: 1000;
+}
+
+.current-user {
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--theme-border);
+  margin-bottom: 16px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dropdown-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--luxe-gold);
+  box-shadow: var(--gold-glow);
+}
+
+.dropdown-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--theme-text);
+  margin-bottom: 2px;
+}
+
+.dropdown-title {
+  font-size: 12px;
+  color: var(--luxe-gold);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.dropdown-status {
+  font-size: 11px;
+  color: var(--luxe-emerald);
+  font-weight: 600;
+}
+
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-action-btn {
+  padding: 8px 12px;
+  background: var(--theme-glass);
+  border: 1px solid var(--theme-border);
+  border-radius: 8px;
+  color: var(--theme-text);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  
+  &:hover {
+    background: var(--royal-gradient);
+    color: white;
+    transform: translateX(4px);
+  }
+  
+  &.logout {
+    border-color: var(--luxe-crimson);
+    color: var(--luxe-crimson);
+    
+    &:hover {
+      background: var(--luxe-crimson);
+      color: white;
+    }
   }
 }

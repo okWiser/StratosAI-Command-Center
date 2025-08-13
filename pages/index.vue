@@ -1084,19 +1084,9 @@ const getParticleStyle = (particle, index) => ({
   animationDelay: `${index * 0.3}s`
 })
 
-const switchDataset = (dataset) => {
-  currentDataset.value = dataset
-  showNotification(`Switched to ${dataset} analytics`, 'info')
-}
 
-const selectDataPoint = (bar) => {
-  showNotification(`${bar.label}: ${bar.value} - Detailed analysis available`, 'info')
-}
 
-// Network functions
-const selectNetworkNode = (node) => {
-  showNotification(`${node.name} - Status: ${node.status} - Type: ${node.type}`, 'info')
-}
+
 
 const getNodeColor = (type) => {
   const colors = {

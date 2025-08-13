@@ -1785,7 +1785,14 @@ onUnmounted(() => {
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 24px;
+  margin-top: 48px;
   color: var(--theme-text);
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--theme-border);
+  
+  &:first-of-type {
+    margin-top: 0;
+  }
 }
 
 .globe-container {
@@ -2308,8 +2315,9 @@ onUnmounted(() => {
 
 .reports-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 24px;
+  margin-top: 8px;
 }
 
 .report-card {
@@ -2346,19 +2354,21 @@ onUnmounted(() => {
 
 .report-info {
   flex: 1;
+  padding: 0 8px;
   
   h3 {
     font-size: 16px;
     font-weight: 700;
     color: var(--theme-text);
     margin: 0 0 8px 0;
+    line-height: 1.3;
   }
   
   p {
     font-size: 12px;
     color: var(--theme-textSecondary);
-    margin: 0 0 8px 0;
-    line-height: 1.4;
+    margin: 0 0 12px 0;
+    line-height: 1.5;
   }
 }
 
@@ -2366,18 +2376,23 @@ onUnmounted(() => {
   display: flex;
   gap: 12px;
   font-size: 10px;
+  margin-top: 8px;
 }
 
 .report-type {
   background: rgba(212, 175, 55, 0.1);
   color: var(--luxe-gold);
-  padding: 2px 8px;
+  padding: 4px 8px;
   border-radius: 8px;
   font-weight: 600;
 }
 
 .report-time {
   color: var(--theme-textSecondary);
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid var(--theme-border);
 }
 
 .generate-btn {
@@ -2594,10 +2609,32 @@ onUnmounted(() => {
 .quantum-stats {
   display: flex;
   justify-content: space-around;
+  gap: 16px;
+  margin-top: 16px;
 }
 
 .quantum-stat {
   text-align: center;
+  flex: 1;
+  padding: 12px;
+  background: var(--theme-glass);
+  border-radius: 12px;
+  border: 1px solid var(--theme-border);
+}
+
+.stat-value {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--luxe-gold);
+  margin-bottom: 4px;
+  font-family: 'Playfair Display', serif;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: var(--theme-textSecondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .neural-network {
@@ -2735,14 +2772,24 @@ onUnmounted(() => {
 .biometric-data {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+  margin-top: 20px;
 }
 
 .bio-item {
   display: flex;
   justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--theme-border);
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--theme-glass);
+  border-radius: 8px;
+  border: 1px solid var(--theme-border);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba(212, 175, 55, 0.05);
+    border-color: var(--luxe-gold);
+  }
 }
 
 .bio-label {
@@ -2848,10 +2895,22 @@ onUnmounted(() => {
 
 .log-meta {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   font-size: 11px;
   color: var(--theme-textSecondary);
-  margin-top: 2px;
+  margin-top: 4px;
+}
+
+.log-user {
+  font-weight: 600;
+}
+
+.log-time {
+  font-family: 'Monaco', 'Consolas', monospace;
+}
+
+.log-location {
+  font-style: italic;
 }
 
 .log-status {

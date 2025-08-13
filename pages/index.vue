@@ -3739,3 +3739,322 @@ onUnmounted(() => {
     left: 0;
   }
 }
+// Executive Profile Suite Styling
+.executive-profile-suite {
+  position: relative;
+  cursor: pointer;
+}
+
+.profile-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: var(--theme-glass);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--theme-border);
+  border-radius: 24px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 200px;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--luxe-shadow), var(--gold-glow);
+    border-color: var(--luxe-gold);
+  }
+}
+
+.avatar-stack {
+  position: relative;
+  width: 48px;
+  height: 48px;
+}
+
+.avatar-ring {
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: var(--royal-gradient);
+  animation: avatarPulse 3s ease-in-out infinite;
+}
+
+@keyframes avatarPulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+
+.avatar-container {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  background: var(--royal-gradient);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.avatar-initials {
+  font-size: 18px;
+  font-weight: 800;
+  color: white;
+  font-family: 'Playfair Display', serif;
+}
+
+.avatar-crown {
+  position: absolute;
+  top: -8px;
+  right: -4px;
+  font-size: 16px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.status-orb {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  background: var(--luxe-emerald);
+  border: 2px solid var(--theme-surface);
+  border-radius: 50%;
+  animation: statusBlink 2s ease-in-out infinite;
+}
+
+@keyframes statusBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.profile-text {
+  flex: 1;
+}
+
+.exec-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--theme-text);
+  margin-bottom: 2px;
+  font-family: 'Playfair Display', serif;
+}
+
+.exec-role {
+  font-size: 11px;
+  color: var(--luxe-gold);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dropdown-indicator {
+  font-size: 12px;
+  color: var(--theme-textSecondary);
+  transition: all 0.3s ease;
+  
+  &.active {
+    transform: rotate(180deg);
+    color: var(--luxe-gold);
+  }
+}
+
+// Elite Profile Dropdown
+.profile-dropdown-elite {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 320px;
+  background: var(--theme-glass);
+  backdrop-filter: blur(32px);
+  border: 1px solid var(--theme-border);
+  border-radius: 20px;
+  box-shadow: var(--luxe-shadow), var(--gold-glow);
+  z-index: 1000;
+  animation: dropdownSlide 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--royal-gradient);
+  }
+}
+
+@keyframes dropdownSlide {
+  from { 
+    opacity: 0; 
+    transform: translateY(-10px) scale(0.95); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+}
+
+.dropdown-header {
+  padding: 24px;
+  border-bottom: 1px solid var(--theme-border);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.05), rgba(15, 76, 58, 0.05));
+}
+
+.header-avatar {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  background: var(--royal-gradient);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--gold-glow);
+}
+
+.header-initials {
+  font-size: 20px;
+  font-weight: 800;
+  color: white;
+  font-family: 'Playfair Display', serif;
+}
+
+.online-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  font-size: 12px;
+  background: var(--theme-surface);
+  border-radius: 50%;
+  padding: 2px;
+}
+
+.header-info h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--theme-text);
+  margin: 0 0 4px 0;
+  font-family: 'Playfair Display', serif;
+}
+
+.header-info p {
+  font-size: 12px;
+  color: var(--luxe-gold);
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.clearance-chip {
+  background: var(--royal-gradient);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dropdown-stats {
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-bottom: 1px solid var(--theme-border);
+}
+
+.stat-mini {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.stat-icon {
+  font-size: 14px;
+}
+
+.stat-text {
+  color: var(--theme-textSecondary);
+  font-weight: 500;
+}
+
+.dropdown-actions {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dropdown-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--theme-glass);
+  border: 1px solid var(--theme-border);
+  border-radius: 12px;
+  color: var(--theme-text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  
+  &:hover {
+    transform: translateX(4px);
+    box-shadow: var(--gold-glow);
+    border-color: var(--luxe-gold);
+  }
+  
+  &.primary {
+    background: var(--royal-gradient);
+    color: white;
+    border-color: transparent;
+    
+    &:hover {
+      box-shadow: var(--gold-glow), 0 4px 12px rgba(212, 175, 55, 0.3);
+    }
+  }
+  
+  &.danger {
+    border-color: var(--luxe-crimson);
+    color: var(--luxe-crimson);
+    
+    &:hover {
+      background: var(--luxe-crimson);
+      color: white;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    }
+  }
+}
+
+.btn-icon {
+  font-size: 16px;
+}
+
+// Click outside to close dropdown
+@media (max-width: 768px) {
+  .profile-dropdown-elite {
+    width: 280px;
+    right: -20px;
+  }
+  
+  .profile-main {
+    min-width: 160px;
+  }
+  
+  .exec-name {
+    font-size: 14px;
+  }
+  
+  .exec-role {
+    font-size: 10px;
+  }
+}

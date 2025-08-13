@@ -39,3 +39,24 @@ body {
   border-radius: 20px;
   padding: 20px;
 }
+
+.metric-card:hover {
+  cursor: pointer;
+  .v-card {
+    border: 2px solid rgba(26, 35, 126, 0.3);
+  }
+}
+
+.export-panel {
+  .v-btn {
+    background: linear-gradient(45deg, #1A237E, #3F51B5);
+    color: white;
+  }
+}
+
+.drill-down-modal {
+  .v-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(250,250,250,0.95));
+    backdrop-filter: blur(20px);
+  }
+}

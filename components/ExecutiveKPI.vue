@@ -1,5 +1,5 @@
 <template>
-  <v-card class="metric-card executive-card" elevation="0">
+  <v-card class="metric-card executive-card" elevation="0" @click="showDrillDown = true" style="cursor: pointer;">
     <v-card-text class="pa-6">
       <div class="d-flex justify-space-between align-center mb-3">
         <h3 class="text-h6 font-weight-medium text-on-surface">{{ kpi.title }}</h3>
@@ -25,6 +25,8 @@
       </div>
     </v-card-text>
   </v-card>
+  
+  <DrillDownModal v-model="showDrillDown" :title="kpi.title" :data="kpi" />
 </template>
 
 <script setup lang="ts">
@@ -62,4 +64,5 @@ const trendIcon = computed(() => {
 })
 
 const changePrefix = computed(() => props.kpi.change >= 0 ? '+' : '')
+const showDrillDown = ref(false)
 </script>

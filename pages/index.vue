@@ -8,11 +8,12 @@
       
       <v-spacer />
       
-      <v-chip class="mr-4" color="success" variant="tonal">
-        <v-icon start size="16">mdi-circle</v-icon>
-        Live Data
+      <v-chip class="mr-4" :color="isRealtime ? 'success' : 'warning'" variant="tonal">
+        <v-icon start size="16">{{ isRealtime ? 'mdi-circle' : 'mdi-circle-outline' }}</v-icon>
+        {{ isRealtime ? 'Live Data' : 'Offline' }}
       </v-chip>
       
+      <ExportPanel class="mr-4" />
       <v-btn icon="mdi-account-circle" variant="text" class="mr-4" />
     </v-app-bar>
 
@@ -150,7 +151,10 @@
 const dashboardStore = useDashboardStore()
 const { kpis, insights, criticalInsights, formattedLastUpdate } = storeToRefs(dashboardStore)
 
+const { isConnected: isRealtime } = useWebSocket()
+
 onMounted(() => {
   dashboardStore.fetchDashboardData()
+  dashboardStore.initializeRealtime()
 })
 </script>

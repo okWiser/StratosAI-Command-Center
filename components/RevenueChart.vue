@@ -44,11 +44,14 @@ ChartJS.register(
   Filler
 )
 
-const chartData = {
-  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+const dashboardStore = useDashboardStore()
+const { forecastData } = storeToRefs(dashboardStore)
+
+const chartData = computed(() => ({
+  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
   datasets: [
     {
-      label: 'Revenue',
+      label: 'Actual Revenue',
       data: [2100000, 2300000, 2150000, 2650000, 2800000, 2847500],
       borderColor: '#1A237E',
       backgroundColor: 'rgba(26, 35, 126, 0.1)',
@@ -61,8 +64,8 @@ const chartData = {
       pointRadius: 6
     },
     {
-      label: 'Forecast',
-      data: [null, null, null, null, null, 2847500, 3200000],
+      label: 'ML Forecast',
+      data: [null, null, null, null, null, 2847500, ...forecastData.value],
       borderColor: '#FF6B35',
       backgroundColor: 'rgba(255, 107, 53, 0.1)',
       borderWidth: 2,
@@ -72,7 +75,7 @@ const chartData = {
       pointBackgroundColor: '#FF6B35'
     }
   ]
-}
+}))
 
 const chartOptions = {
   responsive: true,

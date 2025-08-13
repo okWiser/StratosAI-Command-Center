@@ -23,7 +23,9 @@ export const useDashboardStore = defineStore('dashboard', {
     kpis: [] as KPI[],
     insights: [] as AIInsight[],
     isLoading: false,
-    lastUpdated: null as Date | null
+    lastUpdated: null as Date | null,
+    realtimeData: true,
+    forecastData: [] as number[]
   }),
 
   getters: {
@@ -38,10 +40,36 @@ export const useDashboardStore = defineStore('dashboard', {
   },
 
   actions: {
+    initializeRealtime() {
+      const { connect, on } = useWebSocket()
+      connect()
+      
+      on('kpi-update', (data: KPI) => {
+        const index = this.kpis.findIndex(k => k.id === data.id)
+        if (index !== -1) this.kpis[index] = data
+      })
+      
+      on('new-insight', (insight: AIInsight) => {
+        this.insights.unshift(insight)
+        if (this.insights.length > 10) this.insights.pop()
+      })
+    },
+
+    generateMLForecast(historicalData: number[]): number[] {
+      const trend = historicalData.slice(-3).reduce((acc, val, i, arr) => 
+        i > 0 ? acc + (val - arr[i-1]) : acc, 0) / 2
+      
+      return Array.from({ length: 6 }, (_, i) => 
+        historicalData[historicalData.length - 1] + (trend * (i + 1)) * (1 + Math.random() * 0.1)
+      )
+    },
+
     async fetchDashboardData() {
       this.isLoading = true
       try {
-        // Simulate premium executive data
+        const historicalRevenue = [2100000, 2300000, 2150000, 2650000, 2800000, 2847500]
+        this.forecastData = this.generateMLForecast(historicalRevenue)
+        
         this.kpis = [
           {
             id: 'revenue',

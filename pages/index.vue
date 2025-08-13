@@ -1176,9 +1176,7 @@ const stopListening = () => {
   waveAmplitudes.value = Array(12).fill(0)
 }
 
-const executeVoiceCommand = (command) => {
-  showNotification(`Voice Command: "${command}" - Processing...`, 'info')
-}
+
 
 const getWaveBarStyle = (index) => {
   const amplitude = waveAmplitudes.value[index - 1] || 0

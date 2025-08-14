@@ -78,6 +78,93 @@
           </div>
         </div>
 
+        <!-- Executive Decision Engine -->
+        <div class="decision-engine-section">
+          <div class="section-title">
+            <span class="engine-icon">🧠</span>
+            EXECUTIVE DECISION ENGINE
+            <div class="ai-status">AI ACTIVE</div>
+          </div>
+          
+          <div class="decision-interface">
+            <!-- Strategic Decision Input -->
+            <div class="decision-input-panel">
+              <h3>Strategic Decision Input</h3>
+              <div class="decision-form">
+                <select v-model="selectedDecisionType" class="decision-select">
+                  <option value="">Select Decision Type</option>
+                  <option v-for="type in decisionTypes" :key="type.id" :value="type.id">{{ type.name }}</option>
+                </select>
+                
+                <div v-if="selectedDecisionType" class="decision-details">
+                  <input v-model="decisionAmount" type="number" :placeholder="getDecisionPlaceholder()" class="decision-amount" />
+                  <textarea v-model="decisionContext" :placeholder="getContextPlaceholder()" class="decision-context"></textarea>
+                  
+                  <button @click="analyzeDecision" class="analyze-btn" :disabled="!canAnalyze">
+                    <span class="btn-icon">⚡</span>
+                    ANALYZE GLOBAL IMPACT
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Real-time Impact Visualization -->
+            <div v-if="showImpactAnalysis" class="impact-visualization">
+              <h3>Global Impact Analysis</h3>
+              
+              <!-- Impact Metrics -->
+              <div class="impact-metrics">
+                <div v-for="metric in impactMetrics" :key="metric.name" class="impact-metric" :class="metric.trend">
+                  <div class="metric-icon">{{ metric.icon }}</div>
+                  <div class="metric-info">
+                    <div class="metric-name">{{ metric.name }}</div>
+                    <div class="metric-value">{{ metric.value }}</div>
+                    <div class="metric-change">{{ metric.change }}</div>
+                  </div>
+                  <div class="metric-chart">
+                    <div class="chart-bar" :style="{ height: metric.intensity + '%' }"></div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Global Ripple Effect -->
+              <div class="ripple-effect">
+                <h4>Ripple Effect Analysis</h4>
+                <div class="ripple-map">
+                  <div class="ripple-center" @click="showRippleDetails">
+                    <div class="decision-epicenter">{{ selectedDecisionType }}</div>
+                    <div class="ripple-wave" v-for="i in 3" :key="i" :style="{ animationDelay: (i * 0.5) + 's' }"></div>
+                  </div>
+                  
+                  <div v-for="effect in rippleEffects" :key="effect.id" class="ripple-node" :style="effect.position">
+                    <div class="node-icon">{{ effect.icon }}</div>
+                    <div class="node-label">{{ effect.label }}</div>
+                    <div class="node-impact" :class="effect.impact">{{ effect.value }}</div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- AI Recommendations -->
+              <div class="ai-recommendations">
+                <h4>AI Strategic Recommendations</h4>
+                <div class="recommendations-list">
+                  <div v-for="rec in aiRecommendations" :key="rec.id" class="recommendation-item" :class="rec.priority">
+                    <div class="rec-priority">{{ rec.priority.toUpperCase() }}</div>
+                    <div class="rec-content">
+                      <div class="rec-title">{{ rec.title }}</div>
+                      <div class="rec-description">{{ rec.description }}</div>
+                      <div class="rec-impact">Expected Impact: {{ rec.expectedImpact }}</div>
+                    </div>
+                    <button @click="executeRecommendation(rec)" class="execute-btn">
+                      EXECUTE
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
         <!-- AI Assistant -->
         <div class="ai-assistant-section">
           <div class="section-title">ARIA - AI Executive Assistant</div>
@@ -350,6 +437,34 @@ const messages = reactive([
 
 const quickActions = ['Market Analysis', 'Competitor Intel', 'Risk Assessment', 'Growth Opportunities']
 
+// Executive Decision Engine
+const selectedDecisionType = ref('')
+const decisionAmount = ref('')
+const decisionContext = ref('')
+const showImpactAnalysis = ref(false)
+
+const decisionTypes = [
+  { id: 'acquisition', name: 'Strategic Acquisition', placeholder: 'Acquisition amount ($M)', context: 'Target company and strategic rationale...' },
+  { id: 'expansion', name: 'Market Expansion', placeholder: 'Investment amount ($M)', context: 'Target markets and expansion strategy...' },
+  { id: 'product', name: 'Product Launch', placeholder: 'Launch budget ($M)', context: 'Product details and market positioning...' },
+  { id: 'restructure', name: 'Organizational Restructure', placeholder: 'Affected employees', context: 'Restructuring goals and timeline...' },
+  { id: 'investment', name: 'R&D Investment', placeholder: 'Investment amount ($M)', context: 'Research focus and expected outcomes...' }
+]
+
+const impactMetrics = reactive([
+  { name: 'Revenue Impact', icon: '💰', value: '+$0M', change: '0%', trend: 'neutral', intensity: 0 },
+  { name: 'Market Share', icon: '🌍', value: '0%', change: '0%', trend: 'neutral', intensity: 0 },
+  { name: 'Employee Impact', icon: '👥', value: '0', change: '0%', trend: 'neutral', intensity: 0 },
+  { name: 'Risk Level', icon: '⚠️', value: 'Low', change: '0%', trend: 'neutral', intensity: 0 }
+])
+
+const rippleEffects = reactive([])
+const aiRecommendations = reactive([])
+
+const canAnalyze = computed(() => {
+  return selectedDecisionType.value && decisionAmount.value && decisionContext.value
+})
+
 // Mock Data
 const mockData = {
   emailReport: {
@@ -565,6 +680,167 @@ const runSecurityScan = () => {
 const exportKPIReport = () => {
   alert(`${modalData.data.title} report exported successfully!\n\nCurrent Value: ${modalData.data.value}\nTrend: ${modalData.data.change > 0 ? 'Positive' : 'Negative'} (${modalData.data.change}%)\n\nDetailed breakdown included in export.`)
   closeModal()
+}
+
+// Decision Engine Methods
+const getDecisionPlaceholder = () => {
+  const type = decisionTypes.find(t => t.id === selectedDecisionType.value)
+  return type ? type.placeholder : 'Enter amount...'
+}
+
+const getContextPlaceholder = () => {
+  const type = decisionTypes.find(t => t.id === selectedDecisionType.value)
+  return type ? type.context : 'Provide context...'
+}
+
+const analyzeDecision = () => {
+  showImpactAnalysis.value = true
+  
+  // Simulate AI analysis with realistic data
+  const amount = parseFloat(decisionAmount.value) || 0
+  const type = selectedDecisionType.value
+  
+  // Update impact metrics based on decision type and amount
+  updateImpactMetrics(type, amount)
+  generateRippleEffects(type, amount)
+  generateAIRecommendations(type, amount)
+  
+  // Add AI analysis message
+  messages.push({
+    id: Date.now(),
+    type: 'ai',
+    text: `Decision analysis complete. Analyzing ${type} with $${amount}M impact. Global ripple effects calculated across 47 markets. Strategic recommendations generated.`,
+    time: new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })
+  })
+}
+
+const updateImpactMetrics = (type, amount) => {
+  const multipliers = {
+    acquisition: { revenue: 2.5, market: 1.8, employees: 1.2, risk: 1.5 },
+    expansion: { revenue: 1.8, market: 2.2, employees: 1.5, risk: 1.3 },
+    product: { revenue: 1.5, market: 1.6, employees: 1.1, risk: 1.2 },
+    restructure: { revenue: 0.8, market: 0.9, employees: 2.5, risk: 1.8 },
+    investment: { revenue: 1.2, market: 1.3, employees: 1.3, risk: 1.1 }
+  }
+  
+  const mult = multipliers[type] || { revenue: 1, market: 1, employees: 1, risk: 1 }
+  
+  impactMetrics[0].value = `+$${(amount * mult.revenue).toFixed(1)}M`
+  impactMetrics[0].change = `+${(mult.revenue * 10).toFixed(1)}%`
+  impactMetrics[0].trend = mult.revenue > 1 ? 'positive' : 'negative'
+  impactMetrics[0].intensity = Math.min(mult.revenue * 30, 100)
+  
+  impactMetrics[1].value = `${(mult.market * 5).toFixed(1)}%`
+  impactMetrics[1].change = `+${(mult.market * 3).toFixed(1)}%`
+  impactMetrics[1].trend = mult.market > 1 ? 'positive' : 'negative'
+  impactMetrics[1].intensity = Math.min(mult.market * 35, 100)
+  
+  impactMetrics[2].value = `${Math.floor(amount * mult.employees * 100)}`
+  impactMetrics[2].change = `${mult.employees > 1 ? '+' : ''}${((mult.employees - 1) * 100).toFixed(1)}%`
+  impactMetrics[2].trend = mult.employees > 1 ? 'positive' : 'negative'
+  impactMetrics[2].intensity = Math.min(mult.employees * 25, 100)
+  
+  const riskLevels = ['Low', 'Medium', 'High', 'Critical']
+  const riskIndex = Math.min(Math.floor(mult.risk * 2), 3)
+  impactMetrics[3].value = riskLevels[riskIndex]
+  impactMetrics[3].change = `${mult.risk > 1 ? '+' : ''}${((mult.risk - 1) * 50).toFixed(1)}%`
+  impactMetrics[3].trend = mult.risk > 1.2 ? 'negative' : 'positive'
+  impactMetrics[3].intensity = Math.min(mult.risk * 40, 100)
+}
+
+const generateRippleEffects = (type, amount) => {
+  const effects = {
+    acquisition: [
+      { id: 1, icon: '🏢', label: 'Competitors', value: '-15%', impact: 'negative', position: { top: '20%', left: '80%' } },
+      { id: 2, icon: '💹', label: 'Stock Price', value: '+8%', impact: 'positive', position: { top: '60%', left: '85%' } },
+      { id: 3, icon: '👥', label: 'Talent Pool', value: '+25%', impact: 'positive', position: { top: '80%', left: '20%' } },
+      { id: 4, icon: '🌍', label: 'Market Cap', value: '+12%', impact: 'positive', position: { top: '30%', left: '15%' } }
+    ],
+    expansion: [
+      { id: 1, icon: '🌍', label: 'Global Reach', value: '+30%', impact: 'positive', position: { top: '15%', left: '75%' } },
+      { id: 2, icon: '💰', label: 'Revenue Streams', value: '+18%', impact: 'positive', position: { top: '70%', left: '80%' } },
+      { id: 3, icon: '🔄', label: 'Supply Chain', value: '+22%', impact: 'positive', position: { top: '85%', left: '25%' } },
+      { id: 4, icon: '🎨', label: 'Brand Value', value: '+14%', impact: 'positive', position: { top: '25%', left: '20%' } }
+    ],
+    product: [
+      { id: 1, icon: '🚀', label: 'Innovation', value: '+40%', impact: 'positive', position: { top: '10%', left: '70%' } },
+      { id: 2, icon: '📊', label: 'Market Share', value: '+12%', impact: 'positive', position: { top: '65%', left: '85%' } },
+      { id: 3, icon: '🎯', label: 'Customer Base', value: '+28%', impact: 'positive', position: { top: '90%', left: '30%' } },
+      { id: 4, icon: '⚙️', label: 'R&D Pipeline', value: '+35%', impact: 'positive', position: { top: '20%', left: '10%' } }
+    ]
+  }
+  
+  rippleEffects.splice(0, rippleEffects.length, ...(effects[type] || []))
+}
+
+const generateAIRecommendations = (type, amount) => {
+  const recommendations = {
+    acquisition: [
+      {
+        id: 1,
+        priority: 'critical',
+        title: 'Due Diligence Acceleration',
+        description: 'Deploy AI-powered due diligence to reduce timeline by 40%',
+        expectedImpact: '+$50M value creation'
+      },
+      {
+        id: 2,
+        priority: 'high',
+        title: 'Integration Planning',
+        description: 'Establish integration task force within 48 hours',
+        expectedImpact: '60% faster integration'
+      }
+    ],
+    expansion: [
+      {
+        id: 1,
+        priority: 'critical',
+        title: 'Market Entry Strategy',
+        description: 'Leverage local partnerships for 3x faster market penetration',
+        expectedImpact: '+$75M revenue acceleration'
+      },
+      {
+        id: 2,
+        priority: 'high',
+        title: 'Regulatory Compliance',
+        description: 'Engage regulatory experts in target markets immediately',
+        expectedImpact: '80% risk reduction'
+      }
+    ],
+    product: [
+      {
+        id: 1,
+        priority: 'critical',
+        title: 'Launch Optimization',
+        description: 'AI-driven launch sequence for maximum market impact',
+        expectedImpact: '+150% launch velocity'
+      },
+      {
+        id: 2,
+        priority: 'medium',
+        title: 'Customer Feedback Loop',
+        description: 'Implement real-time customer feedback system',
+        expectedImpact: '40% faster iteration'
+      }
+    ]
+  }
+  
+  aiRecommendations.splice(0, aiRecommendations.length, ...(recommendations[type] || []))
+}
+
+const executeRecommendation = (rec) => {
+  alert(`Executing ${rec.title}...\n\n${rec.description}\n\nExpected Impact: ${rec.expectedImpact}\n\nGlobal teams have been notified and implementation is underway.`)
+  
+  messages.push({
+    id: Date.now(),
+    type: 'ai',
+    text: `Recommendation "${rec.title}" executed successfully. Global implementation initiated across all relevant departments and regions.`,
+    time: new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })
+  })
+}
+
+const showRippleDetails = () => {
+  alert(`Decision Epicenter Analysis\n\nDecision Type: ${selectedDecisionType.value}\nInvestment: $${decisionAmount.value}M\n\nGlobal ripple effects are propagating across:\n• 47 international markets\n• 12 business units\n• 8,500+ employees\n• 450+ strategic partners\n\nReal-time monitoring active.`)
 }
 
 // Lifecycle
@@ -1492,6 +1768,488 @@ onMounted(() => {
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
+}
+
+// Executive Decision Engine Styles
+.decision-engine-section {
+  margin-bottom: 48px;
+  
+  .section-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    
+    .engine-icon {
+      font-size: 32px;
+      animation: enginePulse 2s ease-in-out infinite;
+    }
+    
+    .ai-status {
+      background: var(--emerald-gradient);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      animation: statusPulse 3s ease-in-out infinite;
+    }
+  }
+}
+
+.decision-interface {
+  background: var(--theme-glass);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--theme-border);
+  border-radius: 20px;
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--luxe-gold), transparent);
+    animation: scanLine 4s linear infinite;
+  }
+}
+
+.decision-input-panel {
+  margin-bottom: 32px;
+  
+  h3 {
+    margin: 0 0 20px 0;
+    color: var(--theme-text);
+    font-size: 20px;
+    font-weight: 700;
+  }
+  
+  .decision-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    
+    .decision-select {
+      padding: 12px 16px;
+      background: var(--theme-glass);
+      border: 2px solid var(--theme-border);
+      border-radius: 12px;
+      color: var(--theme-text);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      &:focus {
+        outline: none;
+        border-color: var(--luxe-gold);
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+      }
+    }
+    
+    .decision-details {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      animation: slideIn 0.5s ease-out;
+      
+      .decision-amount {
+        padding: 12px 16px;
+        background: var(--theme-glass);
+        border: 2px solid var(--theme-border);
+        border-radius: 12px;
+        color: var(--theme-text);
+        font-size: 16px;
+        font-weight: 600;
+        
+        &:focus {
+          outline: none;
+          border-color: var(--luxe-gold);
+          box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+      }
+      
+      .decision-context {
+        padding: 16px;
+        background: var(--theme-glass);
+        border: 2px solid var(--theme-border);
+        border-radius: 12px;
+        color: var(--theme-text);
+        font-size: 14px;
+        min-height: 100px;
+        resize: vertical;
+        font-family: inherit;
+        
+        &:focus {
+          outline: none;
+          border-color: var(--luxe-gold);
+          box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+      }
+      
+      .analyze-btn {
+        padding: 16px 24px;
+        background: var(--royal-gradient);
+        border: none;
+        border-radius: 12px;
+        color: white;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        
+        .btn-icon {
+          font-size: 20px;
+          animation: sparkle 2s ease-in-out infinite;
+        }
+        
+        &:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: var(--gold-glow), 0 8px 24px rgba(212, 175, 55, 0.4);
+        }
+        
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}
+
+.impact-visualization {
+  animation: fadeInUp 0.8s ease-out;
+  
+  h3 {
+    margin: 0 0 24px 0;
+    color: var(--theme-text);
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+  }
+}
+
+.impact-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+  
+  .impact-metric {
+    background: var(--theme-glass);
+    border: 1px solid var(--theme-border);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    
+    &.positive {
+      border-color: var(--luxe-emerald);
+      box-shadow: 0 0 20px rgba(15, 76, 58, 0.2);
+    }
+    
+    &.negative {
+      border-color: #ff4757;
+      box-shadow: 0 0 20px rgba(255, 71, 87, 0.2);
+    }
+    
+    .metric-icon {
+      font-size: 32px;
+      animation: metricPulse 3s ease-in-out infinite;
+    }
+    
+    .metric-info {
+      flex: 1;
+      
+      .metric-name {
+        font-size: 12px;
+        color: var(--theme-textSecondary);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+      }
+      
+      .metric-value {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--theme-text);
+        margin-bottom: 4px;
+      }
+      
+      .metric-change {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--luxe-gold);
+      }
+    }
+    
+    .metric-chart {
+      width: 40px;
+      height: 60px;
+      position: relative;
+      
+      .chart-bar {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        background: var(--luxe-gold);
+        border-radius: 4px;
+        transition: height 1s ease-out;
+        animation: barGrow 2s ease-out;
+      }
+    }
+  }
+}
+
+.ripple-effect {
+  margin-bottom: 32px;
+  
+  h4 {
+    margin: 0 0 20px 0;
+    color: var(--theme-text);
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+  }
+  
+  .ripple-map {
+    position: relative;
+    height: 300px;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+    border-radius: 16px;
+    overflow: hidden;
+    
+    .ripple-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 120px;
+      height: 120px;
+      background: var(--royal-gradient);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: translate(-50%, -50%) scale(1.1);
+      }
+      
+      .decision-epicenter {
+        color: white;
+        font-weight: 700;
+        font-size: 12px;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      
+      .ripple-wave {
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        border: 2px solid var(--luxe-gold);
+        border-radius: 50%;
+        animation: rippleExpand 3s ease-out infinite;
+        opacity: 0;
+      }
+    }
+    
+    .ripple-node {
+      position: absolute;
+      background: var(--theme-glass);
+      border: 1px solid var(--theme-border);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      min-width: 80px;
+      animation: nodeAppear 1s ease-out;
+      
+      .node-icon {
+        font-size: 20px;
+        margin-bottom: 4px;
+      }
+      
+      .node-label {
+        font-size: 10px;
+        color: var(--theme-textSecondary);
+        margin-bottom: 4px;
+      }
+      
+      .node-impact {
+        font-size: 12px;
+        font-weight: 700;
+        
+        &.positive {
+          color: var(--luxe-emerald);
+        }
+        
+        &.negative {
+          color: #ff4757;
+        }
+      }
+    }
+  }
+}
+
+.ai-recommendations {
+  h4 {
+    margin: 0 0 20px 0;
+    color: var(--theme-text);
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+  }
+  
+  .recommendations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    
+    .recommendation-item {
+      background: var(--theme-glass);
+      border: 1px solid var(--theme-border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: all 0.3s ease;
+      
+      &.critical {
+        border-left: 4px solid #ff4757;
+      }
+      
+      &.high {
+        border-left: 4px solid var(--luxe-amber);
+      }
+      
+      &.medium {
+        border-left: 4px solid var(--luxe-emerald);
+      }
+      
+      .rec-priority {
+        background: var(--royal-gradient);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 8px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1px;
+      }
+      
+      .rec-content {
+        flex: 1;
+        
+        .rec-title {
+          font-size: 16px;
+          font-weight: 700;
+          color: var(--theme-text);
+          margin-bottom: 4px;
+        }
+        
+        .rec-description {
+          font-size: 13px;
+          color: var(--theme-textSecondary);
+          margin-bottom: 8px;
+          line-height: 1.4;
+        }
+        
+        .rec-impact {
+          font-size: 12px;
+          color: var(--luxe-gold);
+          font-weight: 600;
+        }
+      }
+      
+      .execute-btn {
+        padding: 8px 16px;
+        background: var(--emerald-gradient);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: var(--emerald-glow);
+        }
+      }
+    }
+  }
+}
+
+// Decision Engine Animations
+@keyframes enginePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes scanLine {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes sparkle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(90deg); }
+  50% { transform: rotate(180deg); }
+  75% { transform: rotate(270deg); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes metricPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes barGrow {
+  from { height: 0; }
+  to { height: var(--final-height, 50%); }
+}
+
+@keyframes rippleExpand {
+  0% { transform: scale(0.6); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+@keyframes nodeAppear {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 @media (max-width: 768px) {

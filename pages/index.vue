@@ -322,15 +322,18 @@
               <!-- Launch Pad -->
               <div class="launch-pad">
                 <h3>Strategic Launch Pad</h3>
-                <div class="rocket-display">
-                  <div class="rocket" @click="launchMission">
-                    <div class="rocket-body"></div>
-                    <div class="rocket-flames" v-if="isLaunching">
-                      <div class="flame" v-for="i in 3" :key="i"></div>
-                    </div>
+              <div class="rocket-display">
+                <div class="rocket" @click="launchMission" :class="{ launching: isLaunching }">
+                  <div class="rocket-body"></div>
+                  <div class="rocket-flames" v-if="!isLaunching">
+                    <div class="flame" v-for="i in 3" :key="i"></div>
                   </div>
-                  <div class="launch-platform"></div>
+                  <div class="rocket-flames launch-flames" v-if="isLaunching">
+                    <div class="flame" v-for="i in 5" :key="i"></div>
+                  </div>
                 </div>
+                <div class="launch-platform"></div>
+              </div>
                 <div class="launch-controls">
                   <select v-model="selectedMission" class="mission-select">
                     <option value="">Select Mission</option>
@@ -1234,27 +1237,43 @@ const generateProphecy = () => {
 const initiateLaunch = () => {
   if (!selectedMission.value) return
   
-  isLaunching.value = true
   const mission = missions.find(m => m.id == selectedMission.value)
   
   addCommandLog(`Mission "${mission.name}" launch initiated`, 'success')
   
-  setTimeout(() => {
-    isLaunching.value = false
-    addCommandLog(`Mission "${mission.name}" successfully launched`, 'success')
-    
-    // Add to active missions
-    activeMissions.push({
-      id: Date.now(),
-      name: mission.name,
-      icon: '🚀',
-      progress: 0,
-      eta: '24 hours',
-      status: 'active'
-    })
-    
-    selectedMission.value = ''
-  }, 3000)
+  // Start countdown
+  let countdown = 3
+  addCommandLog(`T-${countdown}...`, 'system')
+  
+  const countdownInterval = setInterval(() => {
+    countdown--
+    if (countdown > 0) {
+      addCommandLog(`T-${countdown}...`, 'system')
+    } else {
+      clearInterval(countdownInterval)
+      addCommandLog('LIFTOFF! 🚀', 'success')
+      
+      // Start launch animation
+      isLaunching.value = true
+      
+      // Add to active missions
+      activeMissions.push({
+        id: Date.now(),
+        name: mission.name,
+        icon: '🚀',
+        progress: 0,
+        eta: '24 hours',
+        status: 'active'
+      })
+      
+      selectedMission.value = ''
+      
+      // Reset after animation
+      setTimeout(() => {
+        isLaunching.value = false
+      }, 4000)
+    }
+  }, 1000)
 }
 
 const launchMission = () => {
@@ -3662,6 +3681,50 @@ onMounted(() => {
 @keyframes flameFlicker {
   0% { transform: scaleY(1); }
   100% { transform: scaleY(1.3); }
+}
+
+@keyframes launchFlame {
+  0% { 
+    transform: scaleY(1) scaleX(1);
+    opacity: 1;
+  }
+  100% { 
+    transform: scaleY(1.5) scaleX(1.2);
+    opacity: 0.8;
+  }
+}
+
+@keyframes rocketLaunch {
+  0% {
+    transform: translateX(-50%) translateY(0) rotate(0deg);
+    bottom: 20px;
+  }
+  10% {
+    transform: translateX(-50%) translateY(-10px) rotate(0deg);
+    bottom: 30px;
+  }
+  20% {
+    transform: translateX(-50%) translateY(-30px) rotate(-2deg);
+    bottom: 50px;
+  }
+  40% {
+    transform: translateX(-50%) translateY(-80px) rotate(-5deg);
+    bottom: 100px;
+  }
+  60% {
+    transform: translateX(-50%) translateY(-150px) rotate(-10deg);
+    bottom: 170px;
+  }
+  80% {
+    transform: translateX(-50%) translateY(-250px) rotate(-15deg);
+    bottom: 270px;
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) translateY(-400px) rotate(-20deg);
+    bottom: 420px;
+    opacity: 0;
+  }
 }
 
 @keyframes statusBlink {

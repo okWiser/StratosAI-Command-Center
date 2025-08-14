@@ -1252,13 +1252,17 @@ const refreshAnalytics = (type) => {
 }
 
 const switchDataset = (dataset) => {
-  const insights = {
-    Revenue: '💎 Revenue data: Q4 projections exceed targets by 23%',
-    Users: '👥 User analytics: 847K active executives globally',
-    Performance: '🚀 Performance data: 99.7% uptime across all quantum nodes'
-  }
   currentDataset.value = dataset
-  showNotification(insights[dataset], 'info')
+  openModal('datasetDetail', {
+    title: `${dataset} Analytics`,
+    accuracy: '99.7%',
+    insights: [
+      'Q4 projections exceed targets by 23%',
+      '847K active executives globally tracked',
+      '99.7% uptime across all quantum nodes',
+      'AI predictions showing 94.2% confidence'
+    ]
+  })
 }
 
 const selectDataPoint = (bar) => {
@@ -1266,15 +1270,16 @@ const selectDataPoint = (bar) => {
 }
 
 const selectNetworkNode = (node) => {
-  const nodeData = {
-    router: '⚡ Core Router: 2.4 Tbps throughput, quantum encrypted',
-    server: '🖥️ Web Server: 99.9% uptime, neural load balancing active',
-    database: '🗄️ Database: 847TB processed, blockchain verified',
-    balancer: '⚖️ Load Balancer: AI-optimized traffic distribution',
-    security: '🛡️ Firewall: 12,847 threats blocked today',
-    cdn: '🌐 CDN Edge: Global latency optimized to 8ms'
-  }
-  showNotification(nodeData[node.type] || `${node.name} - Status: ${node.status}`, 'info')
+  openModal('networkDetail', {
+    title: `${node.name} Network Node`,
+    status: node.status.toUpperCase(),
+    alerts: [
+      'High throughput detected: 2.4 Tbps',
+      'Quantum encryption active',
+      'Neural load balancing optimized',
+      'All security protocols operational'
+    ]
+  })
 }
 
 const executeVoiceCommand = (command) => {
@@ -1283,23 +1288,6 @@ const executeVoiceCommand = (command) => {
     confidence: '97.3%',
     result: `Voice command "${command}" executed successfully`,
     actions: ['Dashboard Updated', 'Data Refreshed', 'Notifications Sent']
-  })
-}
-
-const switchDataset = (dataset) => {
-  currentDataset.value = dataset
-  openModal('datasetDetail', {
-    title: `${dataset} Analytics Deep Dive`,
-    accuracy: '96.8%',
-    insights: [`${dataset} trending upward`, 'AI optimization active', 'Performance excellent']
-  })
-}
-
-const selectNetworkNode = (node) => {
-  openModal('networkDetail', {
-    title: node.name,
-    status: 'Optimal Performance',
-    alerts: ['System optimized', 'Performance enhanced', 'Security verified']
   })
 }
 
@@ -1404,19 +1392,7 @@ const showKPIDetails = (kpi) => {
   openModal('kpi', kpiData[kpi.id] || { title: kpi.title, value: kpi.value })
 }
 
-const showOfficeDetails = (office) => {
-  const officeData = {
-    'New York': '🏢 HQ: 847 employees | Revenue: $12.8M | Status: All systems operational',
-    'London': '🇬🇧 EMEA Hub: 234 employees | Revenue: $4.2M | Status: Expansion phase active',
-    'Tokyo': '🇯🇵 APAC Center: 189 employees | Revenue: $3.8M | Status: AI research facility online',
-    'Singapore': '🇸🇬 Tech Hub: 156 employees | Revenue: $2.1M | Status: Quantum computing lab active',
-    'Dubai': '🇦🇪 MEA Office: 98 employees | Revenue: $1.8M | Status: Strategic partnerships growing',
-    'Cape Town': '🇿🇦 Africa HQ: 145 employees | Revenue: $1.4M | Status: Mining tech division expanding',
-    'Sandton': '🇿🇦 Financial Hub: 87 employees | Revenue: $980K | Status: Fintech solutions deployed',
-    'Cairo': '🇪🇬 North Africa: 76 employees | Revenue: $720K | Status: Infrastructure development'
-  }
-  showNotification(officeData[office.city] || `Connecting to ${office.city} office - ${office.tier} tier`, 'info')
-}
+
 
 const selectStock = (stock) => {
   selectedStock.value = stock
@@ -1480,10 +1456,7 @@ const sendMessage = () => {
   }, 1000)
 }
 
-const sendQuickMessage = (action) => {
-  currentMessage.value = action
-  sendMessage()
-}
+
 
 // Holographic functions
 const onHologramMouseMove = (e) => {
@@ -2460,23 +2433,23 @@ onUnmounted(() => {
     font-size: 16px;
     font-weight: 700;
     color: var(--theme-text);
-    margin: 0 0 8px 0;
-    line-height: 1.3;
+    margin: 0 0 12px 0;
+    line-height: 1.4;
   }
   
   p {
     font-size: 12px;
     color: var(--theme-textSecondary);
-    margin: 0 0 12px 0;
-    line-height: 1.5;
+    margin: 0 0 16px 0;
+    line-height: 1.6;
   }
 }
 
 .report-meta {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   font-size: 10px;
-  margin-top: 8px;
+  margin-top: 12px;
 }
 
 .report-type {
@@ -2709,8 +2682,8 @@ onUnmounted(() => {
 .quantum-stats {
   display: flex;
   justify-content: space-around;
-  gap: 16px;
-  margin-top: 16px;
+  gap: 20px;
+  margin-top: 24px;
 }
 
 .quantum-stat {
@@ -2872,8 +2845,8 @@ onUnmounted(() => {
 .biometric-data {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-top: 20px;
+  gap: 12px;
+  margin-top: 24px;
 }
 
 .bio-item {
@@ -2945,9 +2918,10 @@ onUnmounted(() => {
 .logs-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   max-height: 300px;
   overflow-y: auto;
+  padding-right: 8px;
 }
 
 .log-entry {
@@ -2995,10 +2969,10 @@ onUnmounted(() => {
 
 .log-meta {
   display: flex;
-  gap: 16px;
+  gap: 20px;
   font-size: 11px;
   color: var(--theme-textSecondary);
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .log-user {
@@ -3748,8 +3722,8 @@ onUnmounted(() => {
 .preview-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 20px;
+  margin-bottom: 32px;
 }
 
 .preview-stat {
@@ -3775,8 +3749,9 @@ onUnmounted(() => {
 
 .report-actions {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   justify-content: center;
+  margin-top: 8px;
 }
 
 .action-btn {
@@ -4522,4 +4497,585 @@ onUnmounted(() => {
 @keyframes statusBlink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
+}
+// Ultra-Impressive Quantum Profile Styling
+.executive-profile-quantum {
+  position: relative;
+  cursor: pointer;
+  perspective: 1000px;
+}
+
+.profile-holographic {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, 
+    rgba(212, 175, 55, 0.15) 0%, 
+    rgba(15, 76, 58, 0.15) 25%, 
+    rgba(30, 58, 138, 0.15) 50%, 
+    rgba(10, 10, 11, 0.15) 75%,
+    rgba(212, 175, 55, 0.15) 100%);
+  backdrop-filter: blur(40px);
+  border: 3px solid transparent;
+  border-radius: 32px;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 320px;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 3px;
+    background: conic-gradient(
+      from 0deg,
+      var(--luxe-gold) 0deg,
+      var(--luxe-emerald) 72deg,
+      var(--luxe-sapphire) 144deg,
+      var(--luxe-obsidian) 216deg,
+      var(--luxe-gold) 288deg,
+      var(--luxe-emerald) 360deg
+    );
+    border-radius: 32px;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: xor;
+    animation: quantumBorder 4s linear infinite;
+    z-index: -1;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+      transparent, 
+      rgba(212, 175, 55, 0.3), 
+      rgba(15, 76, 58, 0.3),
+      rgba(30, 58, 138, 0.3),
+      transparent
+    );
+    animation: holographicSweep 3s ease-in-out infinite;
+  }
+  
+  &:hover {
+    transform: translateY(-6px) rotateX(5deg) scale(1.03);
+    box-shadow: 
+      0 30px 60px rgba(212, 175, 55, 0.3),
+      0 0 100px rgba(212, 175, 55, 0.2),
+      inset 0 2px 0 rgba(255, 255, 255, 0.2);
+  }
+}
+
+.avatar-quantum-field {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.quantum-ring-1, .quantum-ring-2, .quantum-ring-3 {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid;
+}
+
+.quantum-ring-1 {
+  inset: -8px;
+  border-color: var(--luxe-gold);
+  animation: quantumSpin 6s linear infinite;
+}
+
+.quantum-ring-2 {
+  inset: -4px;
+  border-color: var(--luxe-emerald);
+  animation: quantumSpin 4s linear infinite reverse;
+}
+
+.quantum-ring-3 {
+  inset: 0;
+  border-color: var(--luxe-sapphire);
+  animation: quantumSpin 8s linear infinite;
+}
+
+.holographic-field {
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(212, 175, 55, 0.1) 0%,
+    rgba(15, 76, 58, 0.1) 33%,
+    rgba(30, 58, 138, 0.1) 66%,
+    transparent 100%
+  );
+  animation: holographicPulse 3s ease-in-out infinite;
+}
+
+.quantum-core {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--royal-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 1;
+  box-shadow: 
+    0 0 30px rgba(212, 175, 55, 0.5),
+    inset 0 2px 10px rgba(255, 255, 255, 0.2);
+}
+
+.holographic-avatar {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantum-portrait {
+  position: absolute;
+  inset: 12px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(247, 231, 206, 0.95) 0%,
+    rgba(212, 175, 55, 0.8) 40%,
+    rgba(15, 76, 58, 0.6) 70%,
+    rgba(10, 10, 11, 0.9) 100%
+  );
+  overflow: hidden;
+}
+
+.ceo-silhouette {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.face-outline {
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 28px;
+  background: var(--luxe-obsidian);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.suit-outline {
+  position: absolute;
+  top: 65%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 24px;
+  background: var(--luxe-obsidian);
+  border-radius: 0 0 18px 18px;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 16px;
+    background: var(--luxe-gold);
+    border-radius: 0 0 4px 4px;
+  }
+}
+
+.power-aura {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(212, 175, 55, 0.4) 0%,
+    rgba(212, 175, 55, 0.2) 50%,
+    transparent 100%
+  );
+  animation: powerPulse 2s ease-in-out infinite;
+}
+
+.quantum-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(212, 175, 55, 0.3) 0%,
+    rgba(15, 76, 58, 0.2) 33%,
+    rgba(30, 58, 138, 0.2) 66%,
+    transparent 100%
+  );
+  animation: quantumGlow 4s ease-in-out infinite;
+}
+
+.holographic-scan {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--luxe-gold), transparent);
+  animation: holographicScan 2s linear infinite;
+}
+
+.quantum-initials {
+  position: absolute;
+  font-size: 24px;
+  font-weight: 900;
+  color: white;
+  font-family: 'Playfair Display', serif;
+  text-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.8),
+    0 0 20px rgba(212, 175, 55, 0.8),
+    0 0 40px rgba(212, 175, 55, 0.4);
+  z-index: 3;
+  animation: initialsGlow 3s ease-in-out infinite;
+}
+
+.founder-badge {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--royal-gradient);
+  color: white;
+  font-size: 7px;
+  font-weight: 900;
+  padding: 2px 6px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  z-index: 4;
+}
+
+.quantum-insignia {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 5;
+}
+
+.quantum-star {
+  font-size: 16px;
+  filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.6));
+  animation: quantumTwinkle 2s ease-in-out infinite;
+}
+
+.quantum-crown {
+  font-size: 20px;
+  margin-top: -6px;
+  filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.8));
+  animation: crownFloat 3s ease-in-out infinite;
+}
+
+.power-symbol {
+  font-size: 12px;
+  margin-top: -4px;
+  filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.8));
+  animation: powerFlash 1.5s ease-in-out infinite;
+}
+
+.quantum-constellation {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  width: 24px;
+  height: 24px;
+}
+
+.quantum-node {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--luxe-emerald);
+  
+  &.main {
+    width: 16px;
+    height: 16px;
+    border: 3px solid var(--theme-surface);
+    animation: quantumPulse 2s ease-in-out infinite;
+    box-shadow: 0 0 20px var(--luxe-emerald);
+  }
+  
+  &.orbit-1 {
+    width: 6px;
+    height: 6px;
+    top: 2px;
+    right: 2px;
+    background: var(--luxe-gold);
+    animation: quantumOrbit1 3s linear infinite;
+  }
+  
+  &.orbit-2 {
+    width: 4px;
+    height: 4px;
+    top: 8px;
+    right: 8px;
+    background: var(--luxe-sapphire);
+    animation: quantumOrbit2 4s linear infinite;
+  }
+  
+  &.orbit-3 {
+    width: 3px;
+    height: 3px;
+    bottom: 2px;
+    left: 2px;
+    background: var(--luxe-emerald);
+    animation: quantumOrbit3 5s linear infinite;
+  }
+}
+
+.quantum-profile-info {
+  flex: 1;
+  padding: 0 12px;
+}
+
+.quantum-name {
+  position: relative;
+  margin-bottom: 6px;
+}
+
+.name-glow {
+  font-size: 20px;
+  font-weight: 800;
+  font-family: 'Playfair Display', serif;
+  background: var(--royal-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 2px 4px rgba(212, 175, 55, 0.3));
+  animation: nameShimmer 4s ease-in-out infinite;
+}
+
+.name-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  
+  &::before, &::after {
+    content: '✨';
+    position: absolute;
+    font-size: 8px;
+    color: var(--luxe-gold);
+    animation: particleFloat 3s ease-in-out infinite;
+  }
+  
+  &::before {
+    top: -4px;
+    left: 10%;
+    animation-delay: 0s;
+  }
+  
+  &::after {
+    top: -2px;
+    right: 15%;
+    animation-delay: 1.5s;
+  }
+}
+
+.quantum-title {
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.title-text {
+  font-size: 12px;
+  color: var(--luxe-gold);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+
+.title-underline {
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  height: 1px;
+  background: var(--royal-gradient);
+  animation: underlineGrow 3s ease-in-out infinite;
+}
+
+.quantum-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quantum-pulse {
+  width: 8px;
+  height: 8px;
+  background: var(--luxe-emerald);
+  border-radius: 50%;
+  animation: quantumStatusPulse 2s ease-in-out infinite;
+  box-shadow: 0 0 10px var(--luxe-emerald);
+}
+
+.status-text {
+  font-size: 10px;
+  color: var(--theme-textSecondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.quantum-chevron {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  
+  &.active {
+    transform: rotate(180deg);
+  }
+}
+
+.chevron-hologram {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  border-right: 3px solid var(--luxe-gold);
+  border-bottom: 3px solid var(--luxe-gold);
+  transform: translate(-50%, -50%) rotate(45deg);
+  transition: all 0.4s ease;
+  filter: drop-shadow(0 2px 4px rgba(212, 175, 55, 0.4));
+}
+
+.chevron-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.3), transparent);
+  border-radius: 50%;
+  animation: chevronGlow 2s ease-in-out infinite;
+}
+
+// Quantum Animations
+@keyframes quantumBorder {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes holographicSweep {
+  0% { left: -100%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
+}
+
+@keyframes quantumSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes holographicPulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.1); }
+}
+
+@keyframes powerPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes quantumGlow {
+  0%, 100% { opacity: 0.3; }
+  33% { opacity: 0.6; }
+  66% { opacity: 0.4; }
+}
+
+@keyframes holographicScan {
+  0% { top: 0; }
+  100% { top: 100%; }
+}
+
+@keyframes initialsGlow {
+  0%, 100% { text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 175, 55, 0.8); }
+  50% { text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8), 0 0 40px rgba(212, 175, 55, 1), 0 0 60px rgba(15, 76, 58, 0.6); }
+}
+
+@keyframes quantumTwinkle {
+  0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+  50% { opacity: 0.7; transform: scale(1.3) rotate(180deg); }
+}
+
+@keyframes crownFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes powerFlash {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes quantumPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
+}
+
+@keyframes quantumOrbit1 {
+  from { transform: rotate(0deg) translateX(12px) rotate(0deg); }
+  to { transform: rotate(360deg) translateX(12px) rotate(-360deg); }
+}
+
+@keyframes quantumOrbit2 {
+  from { transform: rotate(0deg) translateX(8px) rotate(0deg); }
+  to { transform: rotate(-360deg) translateX(8px) rotate(360deg); }
+}
+
+@keyframes quantumOrbit3 {
+  from { transform: rotate(0deg) translateX(10px) rotate(0deg); }
+  to { transform: rotate(360deg) translateX(10px) rotate(-360deg); }
+}
+
+@keyframes nameShimmer {
+  0%, 100% { filter: drop-shadow(0 2px 4px rgba(212, 175, 55, 0.3)); }
+  50% { filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.8)) drop-shadow(0 0 20px rgba(15, 76, 58, 0.4)); }
+}
+
+@keyframes particleFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
+  50% { transform: translateY(-8px) rotate(180deg); opacity: 1; }
+}
+
+@keyframes underlineGrow {
+  0% { width: 0%; }
+  50% { width: 100%; }
+  100% { width: 0%; }
+}
+
+@keyframes quantumStatusPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.6; }
+}
+
+@keyframes chevronGlow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
 }

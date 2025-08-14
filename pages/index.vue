@@ -165,6 +165,123 @@
           </div>
         </div>
         
+        <!-- Executive Time Machine -->
+        <div class="time-machine-section">
+          <div class="section-title">
+            <span class="time-icon">⏰</span>
+            EXECUTIVE TIME MACHINE
+            <div class="quantum-status">QUANTUM ACTIVE</div>
+          </div>
+          
+          <div class="time-machine-interface">
+            <div class="timeline-selector">
+              <h3>Navigate Business Timeline</h3>
+              <div class="timeline-controls">
+                <button v-for="period in timePeriods" :key="period.id" @click="travelToTime(period)" class="time-btn" :class="{ active: selectedPeriod === period.id }">
+                  {{ period.label }}
+                </button>
+              </div>
+            </div>
+            
+            <div v-if="timeData" class="time-visualization">
+              <div class="time-portal">
+                <div class="portal-ring" v-for="i in 5" :key="i" :style="{ animationDelay: (i * 0.2) + 's' }"></div>
+                <div class="portal-center">
+                  <div class="time-display">{{ timeData.period }}</div>
+                  <div class="time-subtitle">{{ timeData.subtitle }}</div>
+                </div>
+              </div>
+              
+              <div class="time-metrics">
+                <div v-for="metric in timeData.metrics" :key="metric.name" class="time-metric">
+                  <div class="metric-label">{{ metric.name }}</div>
+                  <div class="metric-value">{{ metric.value }}</div>
+                  <div class="metric-trend" :class="metric.trend">{{ metric.change }}</div>
+                </div>
+              </div>
+              
+              <div class="time-insights">
+                <h4>{{ timeData.period }} Insights</h4>
+                <div v-for="insight in timeData.insights" :key="insight" class="time-insight">
+                  💡 {{ insight }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Executive War Room -->
+        <div class="war-room-section">
+          <div class="section-title">
+            <span class="war-icon">⚔️</span>
+            EXECUTIVE WAR ROOM
+            <div class="battle-status">BATTLE READY</div>
+          </div>
+          
+          <div class="war-room-interface">
+            <div class="threat-radar">
+              <h3>Competitive Threat Radar</h3>
+              <div class="radar-display">
+                <div class="radar-sweep"></div>
+                <div class="radar-grid">
+                  <div class="grid-line horizontal" v-for="i in 4" :key="'h' + i"></div>
+                  <div class="grid-line vertical" v-for="i in 4" :key="'v' + i"></div>
+                </div>
+                <div v-for="threat in competitiveThreats" :key="threat.id" class="threat-blip" :style="threat.position" :class="threat.severity">
+                  <div class="blip-dot"></div>
+                  <div class="blip-label">{{ threat.name }}</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="battle-commands">
+              <h3>Strategic Battle Commands</h3>
+              <div class="command-grid">
+                <button v-for="command in battleCommands" :key="command.id" @click="executeCommand(command)" class="command-btn" :class="command.type">
+                  <div class="command-icon">{{ command.icon }}</div>
+                  <div class="command-name">{{ command.name }}</div>
+                  <div class="command-power">{{ command.power }}</div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Executive Crystal Ball -->
+        <div class="crystal-ball-section">
+          <div class="section-title">
+            <span class="crystal-icon">🔮</span>
+            EXECUTIVE CRYSTAL BALL
+            <div class="prophecy-status">PROPHECY ACTIVE</div>
+          </div>
+          
+          <div class="crystal-interface">
+            <div class="crystal-ball" @click="generateProphecy">
+              <div class="crystal-sphere">
+                <div class="crystal-glow"></div>
+                <div class="crystal-swirl" v-for="i in 3" :key="i" :style="{ animationDelay: (i * 0.8) + 's' }"></div>
+                <div class="crystal-center">ASK</div>
+              </div>
+            </div>
+            
+            <div v-if="prophecy" class="prophecy-display">
+              <h3>The Crystal Ball Reveals...</h3>
+              <div class="prophecy-content">
+                <div class="prophecy-text">{{ prophecy.prediction }}</div>
+                <div class="prophecy-confidence">Confidence: {{ prophecy.confidence }}%</div>
+                <div class="prophecy-timeline">Timeline: {{ prophecy.timeline }}</div>
+              </div>
+              
+              <div class="prophecy-actions">
+                <h4>Recommended Actions</h4>
+                <div v-for="action in prophecy.actions" :key="action" class="prophecy-action">
+                  ⚡ {{ action }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
         <!-- AI Assistant -->
         <div class="ai-assistant-section">
           <div class="section-title">ARIA - AI Executive Assistant</div>
@@ -464,6 +581,59 @@ const aiRecommendations = reactive([])
 const canAnalyze = computed(() => {
   return selectedDecisionType.value && decisionAmount.value && decisionContext.value
 })
+
+// Executive Time Machine
+const selectedPeriod = ref('')
+const timeData = ref(null)
+
+const timePeriods = [
+  { id: 'past', label: '5 Years Ago' },
+  { id: 'present', label: 'Present' },
+  { id: 'future1', label: '1 Year Future' },
+  { id: 'future5', label: '5 Years Future' },
+  { id: 'future10', label: '10 Years Future' }
+]
+
+// War Room
+const competitiveThreats = reactive([
+  { id: 1, name: 'TechCorp', severity: 'high', position: { top: '30%', left: '70%' } },
+  { id: 2, name: 'InnovateCo', severity: 'medium', position: { top: '60%', left: '40%' } },
+  { id: 3, name: 'DisruptorInc', severity: 'critical', position: { top: '20%', left: '30%' } },
+  { id: 4, name: 'StartupX', severity: 'low', position: { top: '80%', left: '60%' } }
+])
+
+const battleCommands = [
+  { id: 1, name: 'Market Blitz', icon: '⚡', power: 'EXTREME', type: 'offensive' },
+  { id: 2, name: 'Price War', icon: '💰', power: 'HIGH', type: 'aggressive' },
+  { id: 3, name: 'Innovation Strike', icon: '🚀', power: 'CRITICAL', type: 'strategic' },
+  { id: 4, name: 'Talent Raid', icon: '👑', power: 'MEDIUM', type: 'tactical' },
+  { id: 5, name: 'Patent Fortress', icon: '🛡️', power: 'DEFENSIVE', type: 'protective' },
+  { id: 6, name: 'Media Blitz', icon: '📺', power: 'VIRAL', type: 'influence' }
+]
+
+// Crystal Ball
+const prophecy = ref(null)
+
+const prophecies = [
+  {
+    prediction: 'A major technological breakthrough will emerge from your R&D division within 18 months, revolutionizing the industry and increasing market cap by 340%.',
+    confidence: 87,
+    timeline: '18 months',
+    actions: ['Increase R&D budget by 25%', 'Hire 50 top-tier engineers', 'File 20+ patents', 'Prepare for IPO expansion']
+  },
+  {
+    prediction: 'A strategic acquisition opportunity will present itself in Q2 2025. The target company will be valued at $2.8B but available for $1.9B due to market conditions.',
+    confidence: 92,
+    timeline: '6-8 months',
+    actions: ['Prepare $2B war chest', 'Identify integration team', 'Conduct stealth due diligence', 'Secure board approval']
+  },
+  {
+    prediction: 'Your main competitor will face a major scandal in 14 months, creating a 6-month window to capture 23% additional market share.',
+    confidence: 78,
+    timeline: '14 months',
+    actions: ['Prepare rapid expansion plan', 'Stockpile inventory', 'Train sales force', 'Ready marketing blitz']
+  }
+]
 
 // Mock Data
 const mockData = {
@@ -841,6 +1011,127 @@ const executeRecommendation = (rec) => {
 
 const showRippleDetails = () => {
   alert(`Decision Epicenter Analysis\n\nDecision Type: ${selectedDecisionType.value}\nInvestment: $${decisionAmount.value}M\n\nGlobal ripple effects are propagating across:\n• 47 international markets\n• 12 business units\n• 8,500+ employees\n• 450+ strategic partners\n\nReal-time monitoring active.`)
+}
+
+// Time Machine Methods
+const travelToTime = (period) => {
+  selectedPeriod.value = period.id
+  
+  const timeDataMap = {
+    past: {
+      period: '2019',
+      subtitle: 'The Foundation Era',
+      metrics: [
+        { name: 'Revenue', value: '$500K', change: '+45%', trend: 'positive' },
+        { name: 'Employees', value: '12', change: '+200%', trend: 'positive' },
+        { name: 'Market Share', value: '0.1%', change: 'New', trend: 'neutral' }
+      ],
+      insights: [
+        'Company founded with revolutionary AI vision',
+        'First major client signed (Fortune 500)',
+        'Core team assembled from top tech companies'
+      ]
+    },
+    present: {
+      period: '2024',
+      subtitle: 'The Dominance Era',
+      metrics: [
+        { name: 'Revenue', value: '$2.4M', change: '+380%', trend: 'positive' },
+        { name: 'Employees', value: '847', change: '+7000%', trend: 'positive' },
+        { name: 'Market Share', value: '23.4%', change: '+2340%', trend: 'positive' }
+      ],
+      insights: [
+        'Market leader in AI executive solutions',
+        'Global presence in 47 countries',
+        'IPO preparation underway'
+      ]
+    },
+    future1: {
+      period: '2025',
+      subtitle: 'The Expansion Era',
+      metrics: [
+        { name: 'Revenue', value: '$8.7M', change: '+263%', trend: 'positive' },
+        { name: 'Employees', value: '2,100', change: '+148%', trend: 'positive' },
+        { name: 'Market Share', value: '34.8%', change: '+49%', trend: 'positive' }
+      ],
+      insights: [
+        'Successful IPO raises $500M',
+        'Major acquisition of European competitor',
+        'Launch of quantum AI platform'
+      ]
+    },
+    future5: {
+      period: '2029',
+      subtitle: 'The Empire Era',
+      metrics: [
+        { name: 'Revenue', value: '$2.8B', change: '+32,000%', trend: 'positive' },
+        { name: 'Employees', value: '45,000', change: '+2,043%', trend: 'positive' },
+        { name: 'Market Share', value: '67.2%', change: '+93%', trend: 'positive' }
+      ],
+      insights: [
+        'Global AI empire spanning 120 countries',
+        'First trillion-dollar AI company',
+        'Revolutionary AGI breakthrough achieved'
+      ]
+    },
+    future10: {
+      period: '2034',
+      subtitle: 'The Legacy Era',
+      metrics: [
+        { name: 'Revenue', value: '$47B', change: '+1,580%', trend: 'positive' },
+        { name: 'Employees', value: '500K', change: '+1,011%', trend: 'positive' },
+        { name: 'Market Share', value: '89.3%', change: '+33%', trend: 'positive' }
+      ],
+      insights: [
+        'Most valuable company in human history',
+        'AI has solved climate change and poverty',
+        'Wisani Chauke named Person of the Decade'
+      ]
+    }
+  }
+  
+  timeData.value = timeDataMap[period.id]
+  
+  messages.push({
+    id: Date.now(),
+    type: 'ai',
+    text: `Time travel complete. You are now viewing ${timeData.value.period} - ${timeData.value.subtitle}. Quantum temporal analysis shows remarkable growth trajectory.`,
+    time: new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })
+  })
+}
+
+// War Room Methods
+const executeCommand = (command) => {
+  const commandEffects = {
+    1: 'Market Blitz launched! 47 markets simultaneously targeted. Estimated impact: +$340M revenue, +15% market share.',
+    2: 'Price War initiated! Competitive pricing deployed across all products. Estimated impact: +28% customer acquisition.',
+    3: 'Innovation Strike executed! 12 breakthrough products fast-tracked. Estimated impact: +67% innovation index.',
+    4: 'Talent Raid successful! 150 top engineers recruited from competitors. Estimated impact: +45% R&D velocity.',
+    5: 'Patent Fortress activated! 89 patents filed, legal moat strengthened. Estimated impact: +$2.1B IP value.',
+    6: 'Media Blitz deployed! Global PR campaign launched. Estimated impact: +340% brand awareness.'
+  }
+  
+  alert(`${command.name} - ${command.power} POWER\n\n${commandEffects[command.id]}\n\nGlobal command centers have been notified. Execution in progress.`)
+  
+  messages.push({
+    id: Date.now(),
+    type: 'ai',
+    text: `War Room Command "${command.name}" executed with ${command.power} power. Strategic battle protocols activated across all global operations.`,
+    time: new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })
+  })
+}
+
+// Crystal Ball Methods
+const generateProphecy = () => {
+  const randomProphecy = prophecies[Math.floor(Math.random() * prophecies.length)]
+  prophecy.value = randomProphecy
+  
+  messages.push({
+    id: Date.now(),
+    type: 'ai',
+    text: `The Crystal Ball reveals a prophecy with ${randomProphecy.confidence}% confidence. The future has been glimpsed, and strategic actions have been recommended.`,
+    time: new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })
+  })
 }
 
 // Lifecycle
@@ -2250,6 +2541,595 @@ onMounted(() => {
 @keyframes nodeAppear {
   from { opacity: 0; transform: scale(0.8); }
   to { opacity: 1; transform: scale(1); }
+}
+
+// Time Machine Styles
+.time-machine-section {
+  margin-bottom: 48px;
+  
+  .section-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    
+    .time-icon {
+      font-size: 32px;
+      animation: timeRotate 4s linear infinite;
+    }
+    
+    .quantum-status {
+      background: var(--sapphire-gradient);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      animation: quantumFlicker 2s ease-in-out infinite;
+    }
+  }
+}
+
+.time-machine-interface {
+  background: var(--theme-glass);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--theme-border);
+  border-radius: 20px;
+  padding: 32px;
+}
+
+.timeline-controls {
+  display: flex;
+  gap: 12px;
+  margin: 16px 0 32px 0;
+  flex-wrap: wrap;
+  justify-content: center;
+  
+  .time-btn {
+    padding: 12px 20px;
+    background: var(--theme-glass);
+    border: 2px solid var(--theme-border);
+    border-radius: 12px;
+    color: var(--theme-text);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      border-color: var(--luxe-gold);
+      transform: translateY(-2px);
+    }
+    
+    &.active {
+      background: var(--royal-gradient);
+      color: white;
+      border-color: var(--luxe-gold);
+      box-shadow: var(--gold-glow);
+    }
+  }
+}
+
+.time-portal {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 32px;
+  
+  .portal-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--luxe-gold);
+    border-radius: 50%;
+    animation: portalSpin 6s linear infinite;
+    opacity: 0.6;
+    
+    &:nth-child(2) {
+      width: 80%;
+      height: 80%;
+      top: 10%;
+      left: 10%;
+      animation-direction: reverse;
+      animation-duration: 4s;
+    }
+    
+    &:nth-child(3) {
+      width: 60%;
+      height: 60%;
+      top: 20%;
+      left: 20%;
+      animation-duration: 8s;
+    }
+  }
+  
+  .portal-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    
+    .time-display {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--luxe-gold);
+      margin-bottom: 4px;
+    }
+    
+    .time-subtitle {
+      font-size: 12px;
+      color: var(--theme-textSecondary);
+    }
+  }
+}
+
+.time-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+  
+  .time-metric {
+    background: var(--theme-glass);
+    border: 1px solid var(--theme-border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    
+    .metric-label {
+      font-size: 12px;
+      color: var(--theme-textSecondary);
+      margin-bottom: 8px;
+    }
+    
+    .metric-value {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--theme-text);
+      margin-bottom: 4px;
+    }
+    
+    .metric-trend {
+      font-size: 12px;
+      font-weight: 600;
+      
+      &.positive {
+        color: var(--luxe-emerald);
+      }
+    }
+  }
+}
+
+.time-insights {
+  h4 {
+    margin: 0 0 16px 0;
+    color: var(--theme-text);
+    text-align: center;
+  }
+  
+  .time-insight {
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    background: var(--theme-glass);
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--theme-text);
+  }
+}
+
+// War Room Styles
+.war-room-section {
+  margin-bottom: 48px;
+  
+  .section-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    
+    .war-icon {
+      font-size: 32px;
+      animation: warPulse 3s ease-in-out infinite;
+    }
+    
+    .battle-status {
+      background: linear-gradient(135deg, #ff4757, #ff6b7a);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      animation: battleReady 2s ease-in-out infinite;
+    }
+  }
+}
+
+.war-room-interface {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.threat-radar {
+  background: var(--theme-glass);
+  border: 1px solid var(--theme-border);
+  border-radius: 20px;
+  padding: 24px;
+  
+  h3 {
+    margin: 0 0 20px 0;
+    color: var(--theme-text);
+    text-align: center;
+  }
+  
+  .radar-display {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    border: 2px solid var(--luxe-gold);
+    
+    .radar-sweep {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 2px;
+      height: 50%;
+      background: linear-gradient(to bottom, var(--luxe-gold), transparent);
+      transform-origin: bottom center;
+      transform: translate(-50%, -100%);
+      animation: radarSweep 3s linear infinite;
+    }
+    
+    .radar-grid {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      
+      .grid-line {
+        position: absolute;
+        background: rgba(212, 175, 55, 0.3);
+        
+        &.horizontal {
+          width: 100%;
+          height: 1px;
+          
+          &:nth-child(1) { top: 25%; }
+          &:nth-child(2) { top: 50%; }
+          &:nth-child(3) { top: 75%; }
+        }
+        
+        &.vertical {
+          height: 100%;
+          width: 1px;
+          
+          &:nth-child(1) { left: 25%; }
+          &:nth-child(2) { left: 50%; }
+          &:nth-child(3) { left: 75%; }
+        }
+      }
+    }
+    
+    .threat-blip {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      
+      .blip-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        animation: blipPulse 2s ease-in-out infinite;
+        
+        .threat-blip.critical & {
+          background: #ff4757;
+          box-shadow: 0 0 10px #ff4757;
+        }
+        
+        .threat-blip.high & {
+          background: var(--luxe-amber);
+          box-shadow: 0 0 8px var(--luxe-amber);
+        }
+        
+        .threat-blip.medium & {
+          background: var(--luxe-gold);
+          box-shadow: 0 0 6px var(--luxe-gold);
+        }
+        
+        .threat-blip.low & {
+          background: var(--luxe-emerald);
+          box-shadow: 0 0 4px var(--luxe-emerald);
+        }
+      }
+      
+      .blip-label {
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 10px;
+        color: var(--theme-text);
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
+.battle-commands {
+  background: var(--theme-glass);
+  border: 1px solid var(--theme-border);
+  border-radius: 20px;
+  padding: 24px;
+  
+  h3 {
+    margin: 0 0 20px 0;
+    color: var(--theme-text);
+    text-align: center;
+  }
+  
+  .command-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    
+    .command-btn {
+      padding: 16px 12px;
+      background: var(--theme-glass);
+      border: 2px solid var(--theme-border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      
+      &:hover {
+        transform: translateY(-2px);
+        border-color: var(--luxe-gold);
+      }
+      
+      &.offensive {
+        border-left-color: #ff4757;
+      }
+      
+      &.strategic {
+        border-left-color: var(--luxe-sapphire);
+      }
+      
+      &.tactical {
+        border-left-color: var(--luxe-amber);
+      }
+      
+      .command-icon {
+        font-size: 24px;
+        margin-bottom: 8px;
+      }
+      
+      .command-name {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--theme-text);
+        margin-bottom: 4px;
+      }
+      
+      .command-power {
+        font-size: 10px;
+        color: var(--luxe-gold);
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+// Crystal Ball Styles
+.crystal-ball-section {
+  margin-bottom: 48px;
+  
+  .section-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    
+    .crystal-icon {
+      font-size: 32px;
+      animation: crystalGlow 4s ease-in-out infinite;
+    }
+    
+    .prophecy-status {
+      background: linear-gradient(135deg, #8b5cf6, #a855f7);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      animation: prophecyPulse 3s ease-in-out infinite;
+    }
+  }
+}
+
+.crystal-interface {
+  background: var(--theme-glass);
+  border: 1px solid var(--theme-border);
+  border-radius: 20px;
+  padding: 32px;
+  text-align: center;
+}
+
+.crystal-ball {
+  display: inline-block;
+  margin-bottom: 32px;
+  cursor: pointer;
+  
+  .crystal-sphere {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3), rgba(138, 43, 226, 0.1), rgba(75, 0, 130, 0.2));
+    border-radius: 50%;
+    border: 3px solid var(--luxe-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: var(--gold-glow), 0 0 40px rgba(138, 43, 226, 0.4);
+    }
+    
+    .crystal-glow {
+      position: absolute;
+      width: 120%;
+      height: 120%;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: crystalBreath 4s ease-in-out infinite;
+    }
+    
+    .crystal-swirl {
+      position: absolute;
+      width: 80%;
+      height: 80%;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: crystalSwirl 8s linear infinite;
+    }
+    
+    .crystal-center {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--luxe-gold);
+      text-shadow: 0 0 10px var(--luxe-gold);
+      z-index: 1;
+    }
+  }
+}
+
+.prophecy-display {
+  animation: prophecyReveal 1s ease-out;
+  
+  h3 {
+    margin: 0 0 20px 0;
+    color: var(--theme-text);
+    font-size: 20px;
+  }
+  
+  .prophecy-content {
+    background: var(--theme-glass);
+    border: 1px solid var(--luxe-gold);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    
+    .prophecy-text {
+      font-size: 16px;
+      color: var(--theme-text);
+      line-height: 1.6;
+      margin-bottom: 16px;
+      font-style: italic;
+    }
+    
+    .prophecy-confidence {
+      font-size: 14px;
+      color: var(--luxe-gold);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .prophecy-timeline {
+      font-size: 14px;
+      color: var(--luxe-emerald);
+      font-weight: 600;
+    }
+  }
+  
+  .prophecy-actions {
+    h4 {
+      margin: 0 0 16px 0;
+      color: var(--theme-text);
+    }
+    
+    .prophecy-action {
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      background: var(--theme-glass);
+      border-radius: 8px;
+      font-size: 14px;
+      color: var(--theme-text);
+      text-align: left;
+    }
+  }
+}
+
+// Additional Animations
+@keyframes timeRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes quantumFlicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes portalSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes warPulse {
+  0%, 100% { transform: scale(1); color: #ff4757; }
+  50% { transform: scale(1.1); color: #ff6b7a; }
+}
+
+@keyframes battleReady {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes radarSweep {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes blipPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.7; }
+}
+
+@keyframes crystalGlow {
+  0%, 100% { text-shadow: 0 0 5px currentColor; }
+  50% { text-shadow: 0 0 20px currentColor, 0 0 30px currentColor; }
+}
+
+@keyframes prophecyPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes crystalBreath {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.1); opacity: 0.6; }
+}
+
+@keyframes crystalSwirl {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes prophecyReveal {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 768px) {

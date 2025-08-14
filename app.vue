@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-const { isDark } = useTheme()
+const isDark = ref(true)
 </script>
 
 <style>

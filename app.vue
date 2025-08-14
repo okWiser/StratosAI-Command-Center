@@ -5,11 +5,21 @@
 </template>
 
 <script setup>
+import { ref, provide } from 'vue'
 const isDark = ref(true)
+
+const toggleTheme = () => {
+  isDark.value = !isDark.value
+}
+
+// Provide theme state to child components
+provide('isDark', isDark)
+provide('toggleTheme', toggleTheme)
 </script>
 
 <style>
 :root {
+  /* Dark Theme */
   --theme-background: linear-gradient(135deg, #0a0a0b 0%, #1a1a1b 100%);
   --theme-text: #ffffff;
   --theme-textSecondary: #a0a0a0;
@@ -31,10 +41,34 @@ const isDark = ref(true)
   --luxe-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
+[data-theme="light"] {
+  /* Light Theme */
+  --theme-background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  --theme-text: #212529;
+  --theme-textSecondary: #6c757d;
+  --theme-surface: #ffffff;
+  --theme-border: rgba(212, 175, 55, 0.3);
+  --theme-glass: rgba(255, 255, 255, 0.8);
+  --luxe-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
 .app-wrapper {
   min-height: 100vh;
   background: var(--theme-background);
   color: var(--theme-text);
   transition: all 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 </style>

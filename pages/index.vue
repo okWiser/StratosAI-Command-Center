@@ -51,7 +51,7 @@
         <div class="executive-summary">
           <div class="summary-header">
 
-            <h1 class="executive-title">Executive Command Center</h1>
+            <h1 class="executive-title">Executive Mission Control</h1>
             <div class="summary-meta">
               <div class="meta-item">
                 <span>🛡️ Quantum Encrypted</span>

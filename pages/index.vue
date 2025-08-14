@@ -19,7 +19,7 @@
           <button @click="sendToEmail" class="email-btn">
             📧 Email Report
           </button>
-          <div class="executive-profile-card" @click="openProfileModal">
+<div class="executive-profile-card" @click="toggleProfileDropdown">
             <div class="profile-glow"></div>
             <div class="profile-content">
               <div class="profile-avatar-container">
@@ -83,25 +83,23 @@
 
         <!-- KPI Grid -->
         <div class="kpi-grid">
-          <ErrorBoundary>
-            <template v-if="isLoading">
-              <SkeletonLoader v-for="i in 4" :key="i" variant="card" />
-            </template>
-            <template v-else>
-              <div v-for="kpi in kpis" :key="kpi.id" class="kpi-card" @click="showKPIDetails(kpi)">
-                <div class="kpi-header">
-                  <div class="kpi-icon">{{ kpi.icon }}</div>
-                  <div class="kpi-title">{{ kpi.title }}</div>
-                  <button @click.stop="refreshKPI(kpi.id)" class="refresh-mini">🔄</button>
-                </div>
-                <div class="kpi-value">{{ kpi.value }}</div>
-                <div class="kpi-change" :class="kpi.trend">
-                  {{ kpi.change > 0 ? '+' : '' }}{{ kpi.change }}%
-                </div>
-                <div class="last-updated">Updated: {{ formatTime(lastUpdated) }}</div>
+          <div v-if="isLoading">
+            <div v-for="i in 4" :key="i" class="skeleton-loader card"></div>
+          </div>
+          <div v-else>
+            <div v-for="kpi in kpis" :key="kpi.id" class="kpi-card" @click="showKPIDetails(kpi)">
+              <div class="kpi-header">
+                <div class="kpi-icon">{{ kpi.icon }}</div>
+                <div class="kpi-title">{{ kpi.title }}</div>
+                <button @click.stop="refreshKPI(kpi.id)" class="refresh-mini">🔄</button>
               </div>
-            </template>
-          </ErrorBoundary>
+              <div class="kpi-value">{{ kpi.value }}</div>
+              <div class="kpi-change" :class="kpi.trend">
+                {{ kpi.change > 0 ? '+' : '' }}{{ kpi.change }}%
+              </div>
+              <div class="last-updated">Updated: {{ formatTime(lastUpdated) }}</div>
+            </div>
+          </div>
         </div>
 
         <!-- Live Stock Ticker -->
@@ -169,10 +167,9 @@
             Holographic Analytics
             <span class="data-status">🟢 Live Data</span>
           </div>
-          <ErrorBoundary>
-            <div class="hologram-container" @mousemove="onHologramMouseMove" @touchmove="onHologramTouchMove">
-              <SkeletonLoader v-if="isLoading" variant="chart" />
-              <template v-else>
+          <div class="hologram-container" @mousemove="onHologramMouseMove" @touchmove="onHologramTouchMove">
+            <div v-if="isLoading" class="skeleton-loader chart"></div>
+            <div v-else>
                 <div class="hologram-stage" :style="hologramStyle">
                   <div v-for="(bar, index) in dataPoints" :key="index" 
                        class="data-bar" 
@@ -197,9 +194,8 @@
                     {{ dataset }}
                   </button>
                 </div>
-              </template>
             </div>
-          </ErrorBoundary>
+          </div>
         </div>
 
         <!-- Interactive Globe -->

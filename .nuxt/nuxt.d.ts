@@ -1,5 +1,5 @@
-/// <reference types="@pinia/nuxt" />
 /// <reference types="@vueuse/nuxt" />
+/// <reference types="@pinia/nuxt" />
 /// <reference types="@nuxtjs/google-fonts" />
 /// <reference types="@nuxt/devtools" />
 /// <reference types="@nuxt/telemetry" />

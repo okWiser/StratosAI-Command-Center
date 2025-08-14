@@ -2781,13 +2781,13 @@ onMounted(() => {
     
     .radar-sweep {
       position: absolute;
-      top: 50%;
+      top: 0;
       left: 50%;
       width: 2px;
       height: 50%;
       background: linear-gradient(to bottom, var(--luxe-gold), transparent);
-      transform-origin: bottom center;
-      transform: translate(-50%, -100%);
+      transform-origin: 0 100%;
+      transform: translateX(-50%);
       animation: radarSweep 3s linear infinite;
     }
     

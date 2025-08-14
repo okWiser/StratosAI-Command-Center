@@ -308,6 +308,78 @@
             </div>
           </div>
         </div>
+        
+        <!-- Executive Mission Control -->
+        <div class="mission-control-section">
+          <div class="section-title">
+            <span class="mission-icon">🚀</span>
+            EXECUTIVE MISSION CONTROL
+            <div class="launch-status">LAUNCH READY</div>
+          </div>
+          
+          <div class="mission-interface">
+            <div class="mission-grid">
+              <!-- Launch Pad -->
+              <div class="launch-pad">
+                <h3>Strategic Launch Pad</h3>
+                <div class="rocket-display">
+                  <div class="rocket" @click="launchMission">
+                    <div class="rocket-body"></div>
+                    <div class="rocket-flames" v-if="isLaunching">
+                      <div class="flame" v-for="i in 3" :key="i"></div>
+                    </div>
+                  </div>
+                  <div class="launch-platform"></div>
+                </div>
+                <div class="launch-controls">
+                  <select v-model="selectedMission" class="mission-select">
+                    <option value="">Select Mission</option>
+                    <option v-for="mission in missions" :key="mission.id" :value="mission.id">{{ mission.name }}</option>
+                  </select>
+                  <button @click="initiateLaunch" :disabled="!selectedMission" class="launch-btn">
+                    🚀 INITIATE LAUNCH
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Mission Status -->
+              <div class="mission-status">
+                <h3>Active Missions</h3>
+                <div class="missions-list">
+                  <div v-for="mission in activeMissions" :key="mission.id" class="mission-item" :class="mission.status">
+                    <div class="mission-icon">{{ mission.icon }}</div>
+                    <div class="mission-info">
+                      <div class="mission-name">{{ mission.name }}</div>
+                      <div class="mission-progress">
+                        <div class="progress-bar">
+                          <div class="progress-fill" :style="{ width: mission.progress + '%' }"></div>
+                        </div>
+                        <span class="progress-text">{{ mission.progress }}%</span>
+                      </div>
+                      <div class="mission-eta">ETA: {{ mission.eta }}</div>
+                    </div>
+                    <div class="mission-status-indicator" :class="mission.status"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Command Console -->
+            <div class="command-console">
+              <h3>Executive Command Console</h3>
+              <div class="console-display">
+                <div class="console-line" v-for="(log, index) in commandLogs" :key="index" :class="log.type">
+                  <span class="timestamp">[{{ log.timestamp }}]</span>
+                  <span class="message">{{ log.message }}</span>
+                </div>
+              </div>
+              <div class="console-input">
+                <input v-model="commandInput" @keyup.enter="executeMissionCommand" placeholder="Enter executive command..." class="command-input" />
+                <button @click="executeMissionCommand" class="execute-btn">EXECUTE</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -634,6 +706,30 @@ const prophecies = [
     actions: ['Prepare rapid expansion plan', 'Stockpile inventory', 'Train sales force', 'Ready marketing blitz']
   }
 ]
+
+// Mission Control
+const selectedMission = ref('')
+const isLaunching = ref(false)
+const commandInput = ref('')
+
+const missions = [
+  { id: 1, name: 'Global Expansion Alpha' },
+  { id: 2, name: 'Innovation Breakthrough' },
+  { id: 3, name: 'Market Domination' },
+  { id: 4, name: 'Competitive Strike' }
+]
+
+const activeMissions = reactive([
+  { id: 1, name: 'Project Phoenix', icon: '🔥', progress: 87, eta: '2 days', status: 'active' },
+  { id: 2, name: 'Operation Thunder', icon: '⚡', progress: 45, eta: '1 week', status: 'active' },
+  { id: 3, name: 'Mission Quantum', icon: '🌌', progress: 92, eta: '6 hours', status: 'critical' }
+])
+
+const commandLogs = reactive([
+  { timestamp: '14:32:15', message: 'Executive Command Center initialized', type: 'system' },
+  { timestamp: '14:32:20', message: 'All systems operational', type: 'success' },
+  { timestamp: '14:32:25', message: 'Awaiting executive commands...', type: 'info' }
+])
 
 // Mock Data
 const mockData = {
@@ -1132,6 +1228,74 @@ const generateProphecy = () => {
     text: `The Crystal Ball reveals a prophecy with ${randomProphecy.confidence}% confidence. The future has been glimpsed, and strategic actions have been recommended.`,
     time: new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })
   })
+}
+
+// Mission Control Methods
+const initiateLaunch = () => {
+  if (!selectedMission.value) return
+  
+  isLaunching.value = true
+  const mission = missions.find(m => m.id == selectedMission.value)
+  
+  addCommandLog(`Mission "${mission.name}" launch initiated`, 'success')
+  
+  setTimeout(() => {
+    isLaunching.value = false
+    addCommandLog(`Mission "${mission.name}" successfully launched`, 'success')
+    
+    // Add to active missions
+    activeMissions.push({
+      id: Date.now(),
+      name: mission.name,
+      icon: '🚀',
+      progress: 0,
+      eta: '24 hours',
+      status: 'active'
+    })
+    
+    selectedMission.value = ''
+  }, 3000)
+}
+
+const launchMission = () => {
+  if (selectedMission.value) {
+    initiateLaunch()
+  } else {
+    addCommandLog('Please select a mission first', 'warning')
+  }
+}
+
+const executeMissionCommand = () => {
+  if (!commandInput.value.trim()) return
+  
+  const command = commandInput.value.trim()
+  addCommandLog(`> ${command}`, 'command')
+  
+  // Simulate command processing
+  setTimeout(() => {
+    const responses = [
+      'Command executed successfully',
+      'Global operations updated',
+      'Strategic parameters adjusted',
+      'Executive directive implemented',
+      'Mission parameters optimized'
+    ]
+    
+    const response = responses[Math.floor(Math.random() * responses.length)]
+    addCommandLog(response, 'success')
+  }, 500)
+  
+  commandInput.value = ''
+}
+
+const addCommandLog = (message, type) => {
+  const timestamp = new Date().toLocaleTimeString('en-US', { hour12: false })
+  commandLogs.push({ timestamp, message, type })
+  
+  // Keep only last 10 logs
+  if (commandLogs.length > 10) {
+    commandLogs.shift()
+  }
 }
 
 // Lifecycle
@@ -3130,6 +3294,379 @@ onMounted(() => {
 @keyframes prophecyReveal {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+// Mission Control Styles
+.mission-control-section {
+  margin-bottom: 48px;
+  
+  .section-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    
+    .mission-icon {
+      font-size: 32px;
+      animation: rocketPulse 3s ease-in-out infinite;
+    }
+    
+    .launch-status {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      animation: launchReady 2s ease-in-out infinite;
+    }
+  }
+}
+
+.mission-interface {
+  background: var(--theme-glass);
+  border: 1px solid var(--theme-border);
+  border-radius: 20px;
+  padding: 32px;
+}
+
+.mission-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 32px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.launch-pad {
+  text-align: center;
+  
+  h3 {
+    margin: 0 0 20px 0;
+    color: var(--theme-text);
+  }
+  
+  .rocket-display {
+    position: relative;
+    height: 200px;
+    margin-bottom: 24px;
+    
+    .rocket {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: translateX(-50%) translateY(-5px);
+      }
+      
+      .rocket-body {
+        width: 30px;
+        height: 80px;
+        background: linear-gradient(to bottom, var(--luxe-gold), var(--luxe-amber));
+        border-radius: 15px 15px 5px 5px;
+        position: relative;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          top: -10px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 0;
+          height: 0;
+          border-left: 15px solid transparent;
+          border-right: 15px solid transparent;
+          border-bottom: 20px solid var(--luxe-gold);
+        }
+      }
+      
+      .rocket-flames {
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        
+        .flame {
+          width: 8px;
+          height: 20px;
+          background: linear-gradient(to bottom, #ff4757, #ffa502);
+          border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+          display: inline-block;
+          margin: 0 2px;
+          animation: flameFlicker 0.3s ease-in-out infinite alternate;
+          
+          &:nth-child(2) {
+            animation-delay: 0.1s;
+          }
+          
+          &:nth-child(3) {
+            animation-delay: 0.2s;
+          }
+        }
+      }
+    }
+    
+    .launch-platform {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 20px;
+      background: var(--theme-border);
+      border-radius: 10px;
+    }
+  }
+  
+  .launch-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    
+    .mission-select {
+      padding: 12px 16px;
+      background: var(--theme-glass);
+      border: 2px solid var(--theme-border);
+      border-radius: 12px;
+      color: var(--theme-text);
+      font-weight: 600;
+      
+      &:focus {
+        outline: none;
+        border-color: var(--luxe-gold);
+      }
+    }
+    
+    .launch-btn {
+      padding: 12px 20px;
+      background: var(--emerald-gradient);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: var(--emerald-glow);
+      }
+      
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+.mission-status {
+  h3 {
+    margin: 0 0 20px 0;
+    color: var(--theme-text);
+  }
+  
+  .missions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    
+    .mission-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: var(--theme-glass);
+      border: 1px solid var(--theme-border);
+      border-radius: 12px;
+      
+      &.critical {
+        border-left: 4px solid #ff4757;
+      }
+      
+      &.active {
+        border-left: 4px solid var(--luxe-emerald);
+      }
+      
+      .mission-icon {
+        font-size: 24px;
+      }
+      
+      .mission-info {
+        flex: 1;
+        
+        .mission-name {
+          font-weight: 600;
+          color: var(--theme-text);
+          margin-bottom: 8px;
+        }
+        
+        .mission-progress {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 4px;
+          
+          .progress-bar {
+            flex: 1;
+            height: 6px;
+            background: var(--theme-border);
+            border-radius: 3px;
+            overflow: hidden;
+            
+            .progress-fill {
+              height: 100%;
+              background: var(--luxe-emerald);
+              transition: width 0.3s ease;
+            }
+          }
+          
+          .progress-text {
+            font-size: 12px;
+            color: var(--theme-textSecondary);
+            min-width: 35px;
+          }
+        }
+        
+        .mission-eta {
+          font-size: 11px;
+          color: var(--luxe-gold);
+        }
+      }
+      
+      .mission-status-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        
+        &.active {
+          background: var(--luxe-emerald);
+          box-shadow: 0 0 8px var(--luxe-emerald);
+          animation: statusBlink 2s ease-in-out infinite;
+        }
+        
+        &.critical {
+          background: #ff4757;
+          box-shadow: 0 0 8px #ff4757;
+          animation: statusBlink 1s ease-in-out infinite;
+        }
+      }
+    }
+  }
+}
+
+.command-console {
+  h3 {
+    margin: 0 0 16px 0;
+    color: var(--theme-text);
+  }
+  
+  .console-display {
+    background: var(--luxe-obsidian);
+    border: 1px solid var(--theme-border);
+    border-radius: 8px;
+    padding: 16px;
+    height: 200px;
+    overflow-y: auto;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 16px;
+    
+    .console-line {
+      margin-bottom: 4px;
+      font-size: 12px;
+      
+      .timestamp {
+        color: var(--luxe-gold);
+        margin-right: 8px;
+      }
+      
+      .message {
+        color: var(--theme-text);
+      }
+      
+      &.system .message {
+        color: var(--luxe-sapphire);
+      }
+      
+      &.success .message {
+        color: var(--luxe-emerald);
+      }
+      
+      &.warning .message {
+        color: var(--luxe-amber);
+      }
+      
+      &.command .message {
+        color: var(--luxe-gold);
+      }
+    }
+  }
+  
+  .console-input {
+    display: flex;
+    gap: 12px;
+    
+    .command-input {
+      flex: 1;
+      padding: 12px 16px;
+      background: var(--theme-glass);
+      border: 2px solid var(--theme-border);
+      border-radius: 8px;
+      color: var(--theme-text);
+      font-family: 'Courier New', monospace;
+      
+      &:focus {
+        outline: none;
+        border-color: var(--luxe-gold);
+      }
+    }
+    
+    .execute-btn {
+      padding: 12px 20px;
+      background: var(--royal-gradient);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--gold-glow);
+      }
+    }
+  }
+}
+
+// Mission Control Animations
+@keyframes rocketPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes launchReady {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes flameFlicker {
+  0% { transform: scaleY(1); }
+  100% { transform: scaleY(1.3); }
+}
+
+@keyframes statusBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
 @media (max-width: 768px) {

@@ -178,6 +178,7 @@ declare global {
   const useBreakpoints: typeof import('../../node_modules/@vueuse/core')['useBreakpoints']
   const useBroadcastChannel: typeof import('../../node_modules/@vueuse/core')['useBroadcastChannel']
   const useBrowserLocation: typeof import('../../node_modules/@vueuse/core')['useBrowserLocation']
+  const useBusinessIntelligence: typeof import('../../composables/useExecutiveData')['useBusinessIntelligence']
   const useCached: typeof import('../../node_modules/@vueuse/core')['useCached']
   const useClipboard: typeof import('../../node_modules/@vueuse/core')['useClipboard']
   const useClipboardItems: typeof import('../../node_modules/@vueuse/core')['useClipboardItems']
@@ -214,6 +215,8 @@ declare global {
   const useEventBus: typeof import('../../node_modules/@vueuse/core')['useEventBus']
   const useEventListener: typeof import('../../node_modules/@vueuse/core')['useEventListener']
   const useEventSource: typeof import('../../node_modules/@vueuse/core')['useEventSource']
+  const useExecutiveProfile: typeof import('../../composables/useExecutiveData')['useExecutiveProfile']
+  const useExecutiveScenarios: typeof import('../../composables/useExecutiveData')['useExecutiveScenarios']
   const useEyeDropper: typeof import('../../node_modules/@vueuse/core')['useEyeDropper']
   const useFavicon: typeof import('../../node_modules/@vueuse/core')['useFavicon']
   const useFetch: typeof import('../../node_modules/nuxt/dist/app/composables/fetch')['useFetch']
@@ -225,6 +228,7 @@ declare global {
   const useFullscreen: typeof import('../../node_modules/@vueuse/core')['useFullscreen']
   const useGamepad: typeof import('../../node_modules/@vueuse/core')['useGamepad']
   const useGeolocation: typeof import('../../node_modules/@vueuse/core')['useGeolocation']
+  const useGlobalNetwork: typeof import('../../composables/useExecutiveData')['useGlobalNetwork']
   const useHead: typeof import('../../node_modules/nuxt/dist/app/composables/head')['useHead']
   const useHeadSafe: typeof import('../../node_modules/nuxt/dist/app/composables/head')['useHeadSafe']
   const useHydration: typeof import('../../node_modules/nuxt/dist/app/composables/hydrate')['useHydration']
@@ -280,6 +284,7 @@ declare global {
   const usePreviewMode: typeof import('../../node_modules/nuxt/dist/app/composables/preview')['usePreviewMode']
   const usePrevious: typeof import('../../node_modules/@vueuse/core')['usePrevious']
   const useRafFn: typeof import('../../node_modules/@vueuse/core')['useRafFn']
+  const useRealTimeData: typeof import('../../composables/useExecutiveData')['useRealTimeData']
   const useRefHistory: typeof import('../../node_modules/@vueuse/core')['useRefHistory']
   const useRequestEvent: typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useRequestEvent']
   const useRequestFetch: typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useRequestFetch']
@@ -367,6 +372,7 @@ declare global {
   const useVModels: typeof import('../../node_modules/@vueuse/core')['useVModels']
   const useVibrate: typeof import('../../node_modules/@vueuse/core')['useVibrate']
   const useVirtualList: typeof import('../../node_modules/@vueuse/core')['useVirtualList']
+  const useVoiceCommands: typeof import('../../composables/useExecutiveData')['useVoiceCommands']
   const useWakeLock: typeof import('../../node_modules/@vueuse/core')['useWakeLock']
   const useWebNotification: typeof import('../../node_modules/@vueuse/core')['useWebNotification']
   const useWebSocket: typeof import('../../composables/useWebSocket')['useWebSocket']
@@ -585,6 +591,7 @@ declare module 'vue' {
     readonly useBreakpoints: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useBreakpoints']>
     readonly useBroadcastChannel: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useBroadcastChannel']>
     readonly useBrowserLocation: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useBrowserLocation']>
+    readonly useBusinessIntelligence: UnwrapRef<typeof import('../../composables/useExecutiveData')['useBusinessIntelligence']>
     readonly useCached: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useCached']>
     readonly useClipboard: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useClipboard']>
     readonly useClipboardItems: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useClipboardItems']>
@@ -621,6 +628,8 @@ declare module 'vue' {
     readonly useEventBus: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useEventBus']>
     readonly useEventListener: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useEventListener']>
     readonly useEventSource: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useEventSource']>
+    readonly useExecutiveProfile: UnwrapRef<typeof import('../../composables/useExecutiveData')['useExecutiveProfile']>
+    readonly useExecutiveScenarios: UnwrapRef<typeof import('../../composables/useExecutiveData')['useExecutiveScenarios']>
     readonly useEyeDropper: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useEyeDropper']>
     readonly useFavicon: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useFavicon']>
     readonly useFetch: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/fetch')['useFetch']>
@@ -632,6 +641,7 @@ declare module 'vue' {
     readonly useFullscreen: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useFullscreen']>
     readonly useGamepad: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useGamepad']>
     readonly useGeolocation: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useGeolocation']>
+    readonly useGlobalNetwork: UnwrapRef<typeof import('../../composables/useExecutiveData')['useGlobalNetwork']>
     readonly useHead: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/head')['useHead']>
     readonly useHeadSafe: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/head')['useHeadSafe']>
     readonly useHydration: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/hydrate')['useHydration']>
@@ -687,6 +697,7 @@ declare module 'vue' {
     readonly usePreviewMode: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/preview')['usePreviewMode']>
     readonly usePrevious: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['usePrevious']>
     readonly useRafFn: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useRafFn']>
+    readonly useRealTimeData: UnwrapRef<typeof import('../../composables/useExecutiveData')['useRealTimeData']>
     readonly useRefHistory: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useRefHistory']>
     readonly useRequestEvent: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useRequestEvent']>
     readonly useRequestFetch: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useRequestFetch']>
@@ -774,6 +785,7 @@ declare module 'vue' {
     readonly useVModels: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useVModels']>
     readonly useVibrate: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useVibrate']>
     readonly useVirtualList: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useVirtualList']>
+    readonly useVoiceCommands: UnwrapRef<typeof import('../../composables/useExecutiveData')['useVoiceCommands']>
     readonly useWakeLock: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useWakeLock']>
     readonly useWebNotification: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useWebNotification']>
     readonly useWebSocket: UnwrapRef<typeof import('../../composables/useWebSocket')['useWebSocket']>
